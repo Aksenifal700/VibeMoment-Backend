@@ -1,0 +1,6 @@
+@InstagramKopirka_HostAddress = http://localhost:5205
+
+GET {{InstagramKopirka_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
