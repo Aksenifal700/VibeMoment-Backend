@@ -8,7 +8,7 @@ namespace VibeMoment.Controllers;
 
 [ApiController]
 [Route("photos")]
-public class PhotosController
+public class PhotosController : ControllerBase
 {
     private static readonly List<Photo> _photos = new();
     
@@ -64,5 +64,25 @@ public class PhotosController
         _photoService.SavePhoto(request);
         
         return true;
+    }
+    [HttpPut("{id:int}")]
+    public ActionResult UpdatePhoto(int id, [FromBody] SavePhotoRequest updatePhoto)
+    {
+        var photo = _photos.FirstOrDefault(p => p.Id == id);
+        if (photo == null) 
+            return NotFound();
+
+        photo.Name = updatePhoto.Name;
+        return Ok(photo);
+    }
+
+    [HttpDelete("{id:int}")]
+    public ActionResult DeletePhoto(int id)
+    {
+        var photo = _photos.FirstOrDefault(p => p.Id == id);
+        if (photo == null) return NotFound();
+
+        _photos.Remove(photo);
+        return NoContent();
     }
 }
