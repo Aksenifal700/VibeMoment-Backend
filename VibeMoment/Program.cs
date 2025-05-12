@@ -1,29 +1,75 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
+using VibeMoment.MappingProfiles;
+using VibeMoment.Services;
+using VibeMoment.Services.Interfaces;
+using VibeMoment.Database;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+
+builder.Services.AddOpenApi();
+builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(PhotoProfile)); // Укажіть тип класу вашого профілю
+
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(
+    builder.Configuration.GetConnectionString("DefaultConnection"),
+    npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(
+        maxRetryCount:5,
+        maxRetryDelay: TimeSpan.FromSeconds(10),
+        errorCodesToAdd:null 
+        ) 
+    )
+);
+//builder.Services.AddSingleton<IPhotoService, PhotoService>();
+builder.Services.AddScoped<IPhotoService, PhotoService>();  // Dependency injection lifetimes
+//builder.Services.AddTransient<IPhotoService, PhotoService>();
+
 var app = builder.Build();
 
-app.UseEndpoints(endpoints =>
+if (app.Environment.IsDevelopment())
 {
-    endpoints.MapGet("/photo", async (HttpContext context) => 
-    {
-        await context.Response.WriteAsync("Get photo");
-    });
-});
-
-public class Photo
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public byte[] Data { get; set; }
-}   
-
-public class AppDbContext : DbContext
-{
-    public DbSet<Photo> Photos { get; set; }
-    
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    app.UseSwagger();
+    app.UseSwaggerUI();
+    app.MapOpenApi();
 }
+
+
+app.UseHttpsRedirection();
+
+app.MapControllers();
+
+app.Run();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
