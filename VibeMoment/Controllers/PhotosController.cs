@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using VibeMoment.Database.Entities;
 using VibeMoment.Requests;
 using VibeMoment.Services.Interfaces;
+using VibeMoment.Database;
 
 namespace VibeMoment.Controllers;
 
@@ -10,79 +11,57 @@ namespace VibeMoment.Controllers;
 [Route("photos")]
 public class PhotosController : ControllerBase
 {
-    private static readonly List<Photo> _photos = new();
-    
+    private readonly AppDbContext _dbContext;
     private readonly IMapper _mapper;
     private readonly IPhotoService _photoService;
 
-    public PhotosController( //Dependency injection - розібратись що це таке 
-        IMapper mapper, 
-        IPhotoService photoService)
+    public PhotosController(AppDbContext dbContext, IMapper mapper, IPhotoService photoService)
     {
+        _dbContext = dbContext;
         _mapper = mapper;
         _photoService = photoService;
     }
 
-
     [HttpGet("{id:int}")]
-    public ActionResult<Photo> GetPhoto([FromRoute] int id)
+    public async Task<ActionResult<Photo>> GetPhoto([FromRoute] int id)
     {
-        var photo = _photos.FirstOrDefault(photo => photo.Id == id);
-        return photo;
-
-        /*for (int i = 0; i < _photos.Count; i++)
-        {
-            if (_photos[i].Id == id)
-            {
-                return _photos[i];
-            }
-        }
-
-        return null;*/
+        var photo = await _dbContext.Photos.FindAsync(id);
+        if (photo == null) 
+            return NotFound();
+        return Ok(photo);
     }
 
     [HttpPost]
-    public ActionResult<bool> SavePhoto([FromBody] SavePhotoRequest request)
+    public async Task<ActionResult<Photo>> SavePhoto([FromBody] SavePhotoRequest request)
     {
-        // Симуляція створення рандомного id як це буде робити база данних
-        var id = Random.Shared.Next(1, 10000000);
-
-        //використання автомаппера
         var photo = _mapper.Map<Photo>(request);
-        
-        // Ручний мапінг
-        /*var photo = new Photo
-        {
-            Id = id, 
-            Name = request.Name
-        };*/
-        
-        
-        _photos.Add(photo);
-        
-        //виклик методу з сервісу в який треба винести логіку щоб вона не була в контроллері 
-        _photoService.SavePhoto(request);
-        
-        return true;
+        await _dbContext.Photos.AddAsync(photo);
+        await _dbContext.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetPhoto), new { id = photo.Id }, photo);
     }
+
     [HttpPut("{id:int}")]
-    public ActionResult UpdatePhoto(int id, [FromBody] SavePhotoRequest updatePhoto)
+    public async Task<ActionResult<Photo>> UpdatePhoto([FromRoute] int id, [FromBody] UpdatePhotoRequest updatePhoto)
     {
-        var photo = _photos.FirstOrDefault(p => p.Id == id);
+        var photo = await _dbContext.Photos.FindAsync(id);
         if (photo == null) 
             return NotFound();
 
         photo.Name = updatePhoto.Name;
+        await _dbContext.SaveChangesAsync();
         return Ok(photo);
     }
 
     [HttpDelete("{id:int}")]
-    public ActionResult DeletePhoto(int id)
+    public async Task<ActionResult> DeletePhoto([FromRoute]int id)
     {
-        var photo = _photos.FirstOrDefault(p => p.Id == id);
-        if (photo == null) return NotFound();
+        var photo = await _dbContext.Photos.FindAsync(id);
+        if (photo == null) 
+            return NotFound();
 
-        _photos.Remove(photo);
+        _dbContext.Photos.Remove(photo);
         return NoContent();
     }
 }
+

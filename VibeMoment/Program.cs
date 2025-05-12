@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using VibeMoment.MappingProfiles;
 using VibeMoment.Services;
 using VibeMoment.Services.Interfaces;
+using VibeMoment.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,17 @@ builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(PhotoProfile)); // Укажіть тип класу вашого профілю
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql("Host=localhost;Port=7192;Database=Photos;Username=postgres;Password=Mambastik135"));
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(
+    builder.Configuration.GetConnectionString("DefaultConnection"),
+    npgsqlOptions => npgsqlOptions.EnableRetryOnFailure(
+        maxRetryCount:5,
+        maxRetryDelay: TimeSpan.FromSeconds(10),
+        errorCodesToAdd:null 
+        ) 
+    )
+);
 //builder.Services.AddSingleton<IPhotoService, PhotoService>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();  // Dependency injection lifetimes
 //builder.Services.AddTransient<IPhotoService, PhotoService>();
