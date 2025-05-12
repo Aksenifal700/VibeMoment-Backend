@@ -60,7 +60,8 @@ public class PhotosController : ControllerBase
         if (photo == null) 
             return NotFound();
 
-        _dbContext.Photos.Remove(photo);
+        _dbContext.Remove(photo);
+        await _dbContext.SaveChangesAsync();
         return NoContent();
     }
 }
