@@ -1,7 +1,7 @@
 namespace VibeMoment.Requests;
 
-public class SavePhotoRequest
+public class UploadPhotoDto
 {
     public string Name { get; set; }
-    public byte[] Data { get; set; }
-}   
+    public IFormFile File { get; set; }
+}

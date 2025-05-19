@@ -28,9 +28,9 @@ public class PhotosController : ControllerBase
         var photo = await _dbContext.Photos.FindAsync(id);
         if (photo == null) 
             return NotFound();
-        return Ok(photo);
+        return File(photo.Data, "application/octet-stream", $"{photo.Name}.jpg");
     }
-
+    
     [HttpPost]
     public async Task<ActionResult<Photo>> SavePhoto([FromBody] SavePhotoRequest request)
     {
@@ -39,6 +39,29 @@ public class PhotosController : ControllerBase
         await _dbContext.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetPhoto), new { id = photo.Id }, photo);
+    }
+    
+    [HttpPost("upload")]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> UploadPhoto([FromForm] UploadPhotoDto dto)
+    {
+        if (dto.File == null || dto.File.Length == 0)
+            return BadRequest("Файл не обрано");
+
+        using var ms = new MemoryStream();
+        await dto.File.CopyToAsync(ms);
+        var bytes = ms.ToArray();
+
+        var photo = new Photo
+        {
+            Name = dto.Name,
+            Data = bytes
+        };
+
+        _dbContext.Photos.Add(photo);
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { photo.Id });
     }
 
     [HttpPut("{id:int}")]
