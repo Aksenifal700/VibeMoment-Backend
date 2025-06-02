@@ -21,9 +21,8 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(
         ) 
     )
 );
-//builder.Services.AddSingleton<IPhotoService, PhotoService>();
-builder.Services.AddScoped<IPhotoService, PhotoService>();  // Dependency injection lifetimes
-//builder.Services.AddTransient<IPhotoService, PhotoService>();
+
+builder.Services.AddScoped<IPhotoService, PhotoService>();  
 
 var app = builder.Build();
 
