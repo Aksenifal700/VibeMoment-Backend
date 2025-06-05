@@ -1,17 +1,20 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using VibeMoment.Database.Entities;
 
-namespace VibeMoment.Database;
-
-public class AppDbContext : DbContext
+namespace VibeMoment.Database
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-    
-    public DbSet<Photo> Photos { get; set; }
-
-    override protected void OnModelCreating(ModelBuilder modelBuilder)
+    public class AppDbContext : IdentityDbContext<IdentityUser>
     {
-        modelBuilder.Entity<Photo>().HasData();
-    }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        public DbSet<Photo> Photos { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            
+        }
+    }
 }

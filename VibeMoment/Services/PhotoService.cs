@@ -1,73 +1,95 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using VibeMoment.Database;
 using VibeMoment.Database.Entities;
 using VibeMoment.Requests;
 using VibeMoment.Services.Interfaces;
 
-
 namespace VibeMoment.Services;
 
 public class PhotoService : IPhotoService
 {
-   private readonly AppDbContext _dbContext;
-   private readonly IMapper _mapper;
+    private readonly AppDbContext _context;
+    private readonly IMapper _mapper;
+    private readonly ILogger<PhotoService> _logger;
 
-   public PhotoService(AppDbContext dbContext, IMapper mapper)
-   {
-      _dbContext = dbContext;
-      _mapper = mapper;
-   }
+    public PhotoService(AppDbContext context, IMapper mapper, ILogger<PhotoService> logger)
+    {
+        _context = context;
+        _mapper = mapper;
+        _logger = logger;
+    }
 
-   public async Task<Photo?> GetPhotoAsync(int id)
-   {
-      return await _dbContext.Photos.FindAsync(id);
-   }
+    public async Task<Photo?> GetPhotoAsync(int id)
+    {
+        var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
 
-   public async Task<Photo> SavePhotoAsync(SavePhotoRequest request)
-   {
-      var photo = _mapper.Map<Photo>(request);
-      await _dbContext.Photos.AddAsync(photo);
-      await _dbContext.SaveChangesAsync();
-      return photo;
-   }
+        if (photo is not null)
+        {
+            _logger.LogInformation("Photo {PhotoId} retrieved. Added: {AddedAt}, Time since added: {TimeSinceAdded}",
+                photo.Id, photo.AddedAt, photo.TimeAgo);
+        }
 
-   public async Task<Photo> UploadPhotoAsync(UploadPhotoDto dto)
-   {
-      using var ms = new MemoryStream();
-      await dto.File.CopyToAsync(ms);
-      var bytes = ms.ToArray();
+        return photo;
+    }
 
-      var photo = new Photo
-      {
-         Name = dto.Name,
-         Data = bytes
-      };
+    public async Task<Photo> UploadPhotoAsync(UploadPhotoDto dto)
+    {
+        using var memoryStream = new MemoryStream();
+        await dto.Photo.CopyToAsync(memoryStream);
 
-      _dbContext.Photos.Add(photo);
-      await _dbContext.SaveChangesAsync();
+        var currentTime = DateTime.UtcNow;
+        var photo = new Photo
+        {
+            Title = dto.Title ?? Path.GetFileNameWithoutExtension(dto.Photo.FileName),
+            Data = memoryStream.ToArray(),
+            AddedAt = currentTime 
+        };
 
-      return photo;
-   }
+        _context.Photos.Add(photo);
+        await _context.SaveChangesAsync();
+        
+        _logger.LogInformation("Photo {PhotoId} uploaded at {AddedAt}. File: {FileName}, Size: {FileSize} bytes",
+            photo.Id, photo.AddedAt, dto.Photo.FileName, dto.Photo.Length);
 
-   public async Task<Photo?> UpdatePhotoAsync(int id, UpdatePhotoRequest update)
-   {
-      var photo = await _dbContext.Photos.FindAsync(id);
-      if (photo == null) return null;
+        return photo;
+    }
 
-      photo.Name = update.Title;
-      await _dbContext.SaveChangesAsync();
+    public async Task<Photo?> UpdatePhotoAsync(int id, UpdatePhotoRequest request)
+    {
+        var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
+        if (photo is null) return null;
 
-      return photo;
-   }
+        photo.Title = request.Title;
+        await _context.SaveChangesAsync();
+        
+        _logger.LogInformation("Photo {PhotoId} updated. Originally added {TimeAgo} ({AddedAt})",
+            photo.Id, photo.TimeAgo, photo.AddedAt);
 
-   public async Task<bool> DeletePhotoAsync(int id)
-   {
-      var photo = await _dbContext.Photos.FindAsync(id);
-      if (photo == null) return false;
+        return photo;
+    }
 
-      _dbContext.Photos.Remove(photo);
-      await _dbContext.SaveChangesAsync();
+    public async Task<bool> DeletePhotoAsync(int id)
+    {
+        var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
+        if (photo is null) return false;
+        
+        _logger.LogInformation("Deleting photo {PhotoId}. Photo existed for {TimeSinceAdded} (added at {AddedAt})",
+            photo.Id, photo.TimeAgo, photo.AddedAt);
 
-      return true;
-   }
+        _context.Photos.Remove(photo);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+    
+    public async Task<IEnumerable<Photo>> GetPhotosByAgeAsync(int olderThanDays = 0)
+    {
+        var photos = await _context.Photos.ToListAsync();
+        var filteredPhotos = photos.Where(p => p.DaysOld >= olderThanDays).ToList();
+
+        _logger.LogInformation("Found {Count} photos older than {Days} days",
+            filteredPhotos.Count, olderThanDays);
+
+        return filteredPhotos;
+    }
 }

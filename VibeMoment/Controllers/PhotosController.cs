@@ -1,19 +1,16 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using VibeMoment.Database.Entities;
 using VibeMoment.Requests;
 using VibeMoment.Services.Interfaces;
-using VibeMoment.Database;
 
 namespace VibeMoment.Controllers;
 
 [ApiController]
-[Route("photos")]
+[Route("api/[controller]")]
 public class PhotosController : ControllerBase
 {
     private readonly IPhotoService _photoService;
 
-    public PhotosController (IPhotoService photoService)
+    public PhotosController(IPhotoService photoService)
     {
         _photoService = photoService;
     }
@@ -22,45 +19,30 @@ public class PhotosController : ControllerBase
     public async Task<ActionResult> GetPhoto([FromRoute] int id)
     {
         var photo = await _photoService.GetPhotoAsync(id);
-        if (photo != null) 
-            return NotFound();
-            
-        return File(photo.Data, "application/octet-stream", $"{photo.Name}.jpg");
+        return photo is null ? NotFound() : File(photo.Data, "image/jpeg");
     }
-    
-    [HttpPost]
-    public async Task<ActionResult<Photo>> SavePhoto([FromBody] SavePhotoRequest request)
-    {
-        var photo = await _photoService.SavePhotoAsync(request);
-        return CreatedAtAction(nameof(GetPhoto), new { id = photo.Id }, photo);
-    }
-    
+
     [HttpPost("upload")]
-    [Consumes("multipart/form-data")]
-    public async Task<IActionResult> UploadPhoto([FromForm] UploadPhotoDto dto)
+    public async Task<ActionResult> UploadPhoto([FromForm] UploadPhotoDto dto)
     {
+        if (dto.Photo is null || dto.Photo.Length is 0)
+            return BadRequest("Photo file is required");
+
         var photo = await _photoService.UploadPhotoAsync(dto);
-        return Ok(new { photo.Id });
+        return CreatedAtAction(nameof(GetPhoto), new { id = photo.Id }, new { id = photo.Id, title = photo.Title });
     }
 
     [HttpPut("{id:int}")]
-    public async Task<ActionResult<Photo>> UpdatePhoto([FromRoute] int id, [FromBody] UpdatePhotoRequest updatePhoto)
+    public async Task<ActionResult> UpdatePhoto([FromRoute] int id, [FromBody] UpdatePhotoRequest request)
     {
-        var updatedPhoto = await _photoService.UpdatePhotoAsync(id, updatePhoto);
-        if (updatedPhoto != null)
-            return NotFound();
-        
-        return Ok(updatePhoto);
+        var photo = await _photoService.UpdatePhotoAsync(id, request);
+        return photo is null ? NotFound() : Ok(new { id = photo.Id, title = photo.Title });
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<ActionResult> DeletePhoto([FromRoute]int id)
+    public async Task<ActionResult> DeletePhoto([FromRoute] int id)
     {
-       var deleated = await _photoService.DeletePhotoAsync(id);
-       if (!deleated) 
-           return NotFound();
-       
-       return NoContent();
+        var deleted = await _photoService.DeletePhotoAsync(id);
+        return deleted ? NoContent() : NotFound();
     }
 }
-
