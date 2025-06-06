@@ -1,5 +1,3 @@
-using VibeMoment.Extension;
-
 namespace VibeMoment.Database.Entities;
 
 public class Photo
@@ -8,8 +6,6 @@ public class Photo
     public string Title { get; set; }
     public byte[] Data { get; set; } = [];
     
-    public DateTime AddedAt { get; set; }= DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
-    public bool CanEdit => AddedAt.CanEdit();
-    public string TimeAgo => AddedAt.TimeAgo();
+    public DateTime AddedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; } 
 }

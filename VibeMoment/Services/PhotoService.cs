@@ -1,7 +1,7 @@
-using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using VibeMoment.Database;
 using VibeMoment.Database.Entities;
+using VibeMoment.Extensions;
 using VibeMoment.Requests;
 using VibeMoment.Services.Interfaces;
 
@@ -11,24 +11,19 @@ namespace VibeMoment.Services;
 public class PhotoService : IPhotoService
 {
     private readonly AppDbContext _context;
-    private readonly IMapper _mapper;
     private readonly ILogger<PhotoService> _logger;
+    
+    private const int EDIT_LIMIT_HOURS = 1;
 
-    public PhotoService(AppDbContext context, IMapper mapper, ILogger<PhotoService> logger)
+    public PhotoService(AppDbContext context, ILogger<PhotoService> logger)
     {
         _context = context;
-        _mapper = mapper;
         _logger = logger;
     }
 
     public async Task<Photo?> GetPhotoAsync(int id)
     {
         var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
-        
-        if (photo is not null)
-            _logger.LogInformation("Photo {Id} - {TimeAgo}, CanEdit: {CanEdit}", 
-                photo.Id, photo.TimeAgo, photo.CanEdit);
-        
         return photo;
     }
 
@@ -54,9 +49,9 @@ public class PhotoService : IPhotoService
     {
         var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
         
-        if (photo is null || !photo.CanEdit)
+        if (photo is null || !photo.AddedAt.CanEdit(EDIT_LIMIT_HOURS))
         {
-            _logger.LogWarning("Photo {Id} - cannot edit (added {TimeAgo})", id, photo?.TimeAgo);
+            _logger.LogWarning("Photo {Id} - cannot edit, because time limit restriction", photo.Id);
             return null;
         }
 
@@ -77,7 +72,7 @@ public class PhotoService : IPhotoService
         _context.Photos.Remove(photo);
         await _context.SaveChangesAsync();
         
-        _logger.LogInformation("Photo {Id} deleted (existed {TimeAgo})", photo.Id, photo.TimeAgo);
+        _logger.LogInformation("Photo with id:{Id} deleted", photo.Id);
         return true;
     }
 }
