@@ -9,6 +9,7 @@ public class Photo
     public byte[] Data { get; set; } = [];
     
     public DateTime AddedAt { get; set; }= DateTime.UtcNow;
+    public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
     public bool CanEdit => AddedAt.CanEdit();
     public string TimeAgo => AddedAt.TimeAgo();
 }

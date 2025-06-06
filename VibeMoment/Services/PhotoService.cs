@@ -25,21 +25,21 @@ public class PhotoService : IPhotoService
     {
         var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
         
-        if (photo != null)
+        if (photo is not null)
             _logger.LogInformation("Photo {Id} - {TimeAgo}, CanEdit: {CanEdit}", 
                 photo.Id, photo.TimeAgo, photo.CanEdit);
         
         return photo;
     }
 
-    public async Task<Photo> UploadPhotoAsync(UploadPhotoDto dto)
+    public async Task<Photo> UploadPhotoAsync(UploadPhotoRequest dto)
     {
         using var stream = new MemoryStream();
         await dto.Photo.CopyToAsync(stream);
         
         var photo = new Photo
         {
-            Title = dto.Title ?? Path.GetFileNameWithoutExtension(dto.Photo.FileName),
+            Title = dto.Title,
             Data = stream.ToArray()
         };
 
@@ -54,13 +54,14 @@ public class PhotoService : IPhotoService
     {
         var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
         
-        if (photo == null || !photo.CanEdit)
+        if (photo is null || !photo.CanEdit)
         {
             _logger.LogWarning("Photo {Id} - cannot edit (added {TimeAgo})", id, photo?.TimeAgo);
             return null;
         }
 
         photo.Title = request.Title;
+        photo.UpdatedAt = DateTime.UtcNow;
         await _context.SaveChangesAsync();
         
         _logger.LogInformation("Photo {Id} updated", photo.Id);
@@ -70,7 +71,8 @@ public class PhotoService : IPhotoService
     public async Task<bool> DeletePhotoAsync(int id)
     {
         var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
-        if (photo == null) return false;
+        if (photo is null)
+            return false;
 
         _context.Photos.Remove(photo);
         await _context.SaveChangesAsync();
