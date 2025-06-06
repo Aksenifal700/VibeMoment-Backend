@@ -48,7 +48,7 @@ public class PhotosController : ControllerBase
         
         return photo is null 
             ? BadRequest("Photo not found or edit time expired") 
-            : Ok(new { photo.Id, photo.Title, photo.CanEdit });
+            : Ok(photo);
     }
 
     [HttpDelete("{id:int}")]
