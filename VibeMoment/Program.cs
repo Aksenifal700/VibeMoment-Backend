@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
-builder.Services.AddAutoMapper(typeof(PhotoProfile)); // Укажіть тип класу вашого профілю
+builder.Services.AddAutoMapper(typeof(PhotoProfile)); 
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(
     builder.Configuration.GetConnectionString("DefaultConnection"),
