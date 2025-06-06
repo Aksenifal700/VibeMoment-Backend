@@ -16,26 +16,23 @@ public class PhotosController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult> GetPhoto([FromRoute] int id, [FromQuery] bool image = false)
+    public async Task<ActionResult> GetPhoto([FromRoute] int id)
     {
         var photo = await _photoService.GetPhotoAsync(id);
         
         if (photo is null) 
             return NotFound();
         
-        if (image)
-            return File(photo.Data, "image/jpeg");
-        
-        return Ok(photo);
+        return File(photo.Data, "image/jpeg");
     }
 
     [HttpPost("upload")]
-    public async Task<ActionResult> UploadPhotoRequest([FromForm] UploadPhotoRequest dto)
+    public async Task<ActionResult> UploadPhotoRequest([FromForm] UploadPhotoRequest request)
     {
-        if (dto.Photo?.Length is 0)
+        if (request.Photo?.Length is 0)
             return BadRequest("Photo required");
 
-        var photo = await _photoService.UploadPhotoAsync(dto);
+        var photo = await _photoService.UploadPhotoAsync(request);
 
         return CreatedAtAction(nameof(GetPhoto), new { id = photo.Id }, photo);
         

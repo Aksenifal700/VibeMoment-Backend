@@ -12,8 +12,8 @@ using VibeMoment.Database;
 namespace VibeMoment.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250606175630_InitialCreateClean")]
-    partial class InitialCreateClean
+    [Migration("20250606192119_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
