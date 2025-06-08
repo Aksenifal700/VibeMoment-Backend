@@ -27,21 +27,21 @@ public class PhotoService : IPhotoService
         return photo;
     }
 
-    public async Task<Photo> UploadPhotoAsync(UploadPhotoRequest dto)
+    public async Task<Photo> UploadPhotoAsync(UploadPhotoRequest request)
     {
         using var stream = new MemoryStream();
-        await dto.Photo.CopyToAsync(stream);
+        await request.Photo.CopyToAsync(stream);
         
         var photo = new Photo
         {
-            Title = dto.Title,
+            Title = request.Title,
             Data = stream.ToArray()
         };
 
         _context.Photos.Add(photo);
         await _context.SaveChangesAsync();
         
-        _logger.LogInformation("Photo {Id} uploaded: {FileName}", photo.Id, dto.Photo.FileName);
+        _logger.LogInformation("Photo {Id} uploaded: {FileName}", photo.Id, request.Photo.FileName);
         return photo;
     }
 
