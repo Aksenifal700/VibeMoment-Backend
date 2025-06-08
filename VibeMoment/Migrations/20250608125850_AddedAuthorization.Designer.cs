@@ -12,8 +12,8 @@ using VibeMoment.Database;
 namespace VibeMoment.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250604151204_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250608125850_AddedAuthorization")]
+    partial class AddedAuthorization
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -229,6 +229,9 @@ namespace VibeMoment.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<byte[]>("Data")
                         .IsRequired()
                         .HasColumnType("bytea");
@@ -236,6 +239,9 @@ namespace VibeMoment.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
