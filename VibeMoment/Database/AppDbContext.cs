@@ -14,7 +14,7 @@ namespace VibeMoment.Database
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            
+            modelBuilder.Entity<Photo>().HasData();
         }
     }
 }

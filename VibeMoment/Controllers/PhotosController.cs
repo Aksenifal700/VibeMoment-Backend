@@ -19,24 +19,33 @@ public class PhotosController : ControllerBase
     public async Task<ActionResult> GetPhoto([FromRoute] int id)
     {
         var photo = await _photoService.GetPhotoAsync(id);
-        return photo is null ? NotFound() : File(photo.Data, "image/jpeg");
+        
+        if (photo is null) 
+            return NotFound();
+        
+        return File(photo.Data, "image/jpeg");
     }
 
     [HttpPost("upload")]
-    public async Task<ActionResult> UploadPhoto([FromForm] UploadPhotoDto dto)
+    public async Task<ActionResult> UploadPhotoRequest([FromForm] UploadPhotoRequest request)
     {
-        if (dto.Photo is null || dto.Photo.Length is 0)
-            return BadRequest("Photo file is required");
+        if (request.Photo?.Length is 0)
+            return BadRequest("Photo required");
 
-        var photo = await _photoService.UploadPhotoAsync(dto);
-        return CreatedAtAction(nameof(GetPhoto), new { id = photo.Id }, new { id = photo.Id, title = photo.Title });
+        var photo = await _photoService.UploadPhotoAsync(request);
+
+        return CreatedAtAction(nameof(GetPhoto), new { id = photo.Id }, photo);
+        
     }
 
     [HttpPut("{id:int}")]
     public async Task<ActionResult> UpdatePhoto([FromRoute] int id, [FromBody] UpdatePhotoRequest request)
     {
         var photo = await _photoService.UpdatePhotoAsync(id, request);
-        return photo is null ? NotFound() : Ok(new { id = photo.Id, title = photo.Title });
+        
+        return photo is null 
+            ? BadRequest("Photo not found or edit time expired") 
+            : Ok(photo);
     }
 
     [HttpDelete("{id:int}")]
