@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VibeMoment.Requests;
 
-public class SignInVm
+public class SignInRequest
 {
     [Required]
     public string UsernameOrEmail { get; set; }

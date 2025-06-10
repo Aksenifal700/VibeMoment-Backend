@@ -7,6 +7,6 @@ public interface IPhotoService
 {
     Task<Photo?> GetPhotoAsync(int id);
     Task<Photo> UploadPhotoAsync(UploadPhotoRequest request);
-    Task<Photo?> UpdatePhotoAsync(int id, UpdatePhotoRequest update);
+    Task<bool> UpdatePhotoAsync(int id, UpdatePhotoRequest update);
     Task<bool> DeletePhotoAsync(int id);
 }

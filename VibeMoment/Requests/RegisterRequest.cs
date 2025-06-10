@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VibeMoment.Requests;
 
-public class RegisterVm
+public class RegisterRequest
 {
     [Required]
     public string Username { get; set; }

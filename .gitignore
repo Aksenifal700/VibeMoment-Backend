@@ -1,15 +1,9 @@
-*.user
-*.sln.DotSettings.user
-
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
 bin/
 obj/
 
 .idea/
-*.sln.iml
 
-*.db
-*.sqlite
+.env
+
+*.user
+

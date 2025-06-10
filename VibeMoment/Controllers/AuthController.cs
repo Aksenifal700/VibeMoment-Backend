@@ -16,7 +16,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult> Register([FromBody] RegisterVm register)
+    public async Task<ActionResult> Register([FromBody] RegisterRequest register)
     {
         var result = await _authService.RegisterAsync(register);
         
@@ -29,7 +29,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("signin")]
-    public async Task<ActionResult> SignIn([FromBody] SignInVm signIn)
+    public async Task<ActionResult> SignIn([FromBody] SignInRequest signIn)
     {
         var result = await _authService.SignInAsync(signIn);
         

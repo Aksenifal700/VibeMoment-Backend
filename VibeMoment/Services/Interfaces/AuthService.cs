@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using VibeMoment.Requests;
-using VibeMoment.Services.Interfaces;
+using VibeMoment.Results;
 
-namespace VibeMoment.Services;
+namespace VibeMoment.Services.Interfaces;
 
 public class AuthService : IAuthService
 {
@@ -15,7 +15,7 @@ public class AuthService : IAuthService
         _signInManager = signInManager;
     }
 
-    public async Task<AuthResult> RegisterAsync(RegisterVm register)
+    public async Task<AuthResult> RegisterAsync(RegisterRequest register)
     {
         var user = new IdentityUser
         {
@@ -43,9 +43,9 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<AuthResult> SignInAsync(SignInVm signIn)
+    public async Task<AuthResult> SignInAsync(SignInRequest signIn)
     {
-        IdentityUser? user = signIn.UsernameOrEmail.Contains("@")
+        var user = signIn.UsernameOrEmail.Contains("@")
             ? await _userManager.FindByEmailAsync(signIn.UsernameOrEmail)
             : await _userManager.FindByNameAsync(signIn.UsernameOrEmail);
 
