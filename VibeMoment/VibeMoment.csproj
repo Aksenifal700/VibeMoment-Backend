@@ -18,6 +18,16 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="8.1.1" />
     </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="publish\web.config" />
+      <_ContentIncludedByDefault Remove="publish\appsettings.Development.json" />
+      <_ContentIncludedByDefault Remove="publish\appsettings.json" />
+      <_ContentIncludedByDefault Remove="publish\VibeMoment.deps.json" />
+      <_ContentIncludedByDefault Remove="publish\VibeMoment.runtimeconfig.json" />
+      <_ContentIncludedByDefault Remove="publish\VibeMoment.staticwebassets.endpoints.json" />
+    </ItemGroup>
+    
 </Project>
 
         

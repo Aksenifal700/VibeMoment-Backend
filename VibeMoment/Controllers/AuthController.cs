@@ -16,9 +16,9 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult> Register([FromBody] RegisterRequest register)
+    public async Task<ActionResult> Register([FromBody] RegisterRequest request)
     {
-        var result = await _authService.RegisterAsync(register);
+        var result = await _authService.RegisterAsync(request);
         
         if (!result.Success)
         {
@@ -29,9 +29,9 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("signin")]
-    public async Task<ActionResult> SignIn([FromBody] SignInRequest signIn)
+    public async Task<ActionResult> SignIn([FromBody] SignInRequest request)
     {
-        var result = await _authService.SignInAsync(signIn);
+        var result = await _authService.SignInAsync(request);
         
         if (!result.Success)
         {

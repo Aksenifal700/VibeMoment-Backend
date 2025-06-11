@@ -1,8 +1,7 @@
-using VibeMoment.ExceptionsHandlers;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using VibeMoment.Database;
 using VibeMoment.Database.Entities;
-using VibeMoment.Extensions;
 using VibeMoment.Requests;
 using VibeMoment.Services.Interfaces;
 
@@ -22,13 +21,11 @@ public class PhotoService : IPhotoService
         _logger = logger;
     }
 
-    public async Task<Photo?> GetPhotoAsync(int id)
+    public async Task<Photo> GetPhotoAsync(int id)
     {
-        var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
+        var photo = await _context.Photos.FindAsync(id);
         
-        if (photo is null)
-            throw new NotFoundException($"Photo with id {id} was not found");
-        return photo;
+        return photo; 
     }
 
     public async Task<Photo> UploadPhotoAsync(UploadPhotoRequest request)

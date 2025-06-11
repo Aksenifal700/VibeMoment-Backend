@@ -1,0 +1,9 @@
+**/.vs
+**/.vscode
+**/*.*proj.user
+**/bin
+**/obj
+**/Dockerfile*
+**/.git
+**/.gitignore
+**/README.md

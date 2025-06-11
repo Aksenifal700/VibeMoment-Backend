@@ -1,0 +1,17 @@
+﻿services:
+  api:
+    build:
+      context: .
+      dockerfile: VibeMoment/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - vibemoment-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=vibemoment-postgres;Port=5432;Database=vibemomentdb;Username=postgres;Password=Mambastik135
+                                            
+
+networks:
+  vibemoment-network:
+    external: true

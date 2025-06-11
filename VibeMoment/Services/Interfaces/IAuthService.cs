@@ -5,8 +5,8 @@ namespace VibeMoment.Services.Interfaces;
 
 public interface IAuthService
 {
-    Task<AuthResult> RegisterAsync(RegisterRequest register);
-    Task<AuthResult> SignInAsync(SignInRequest signIn);
+    Task<AuthResult> RegisterAsync(RegisterRequest request);
+    Task<AuthResult> SignInAsync(SignInRequest request);
     Task SignOutAsync();
 }
 
