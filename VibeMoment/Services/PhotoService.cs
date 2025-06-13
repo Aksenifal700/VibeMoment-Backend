@@ -21,7 +21,7 @@ public class PhotoService : IPhotoService
         _logger = logger;
     }
 
-    public async Task<Photo> GetPhotoAsync(int id)
+    public async Task<Photo?> GetPhotoAsync(int id)
     {
         var photo = await _context.Photos.FindAsync(id);
         
