@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using VibeMoment.Database;
 using VibeMoment.Database.Entities;
-using VibeMoment.Extensions;
 using VibeMoment.Requests;
 using VibeMoment.Services.Interfaces;
 
@@ -23,8 +23,9 @@ public class PhotoService : IPhotoService
 
     public async Task<Photo?> GetPhotoAsync(int id)
     {
-        var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
-        return photo;
+        var photo = await _context.Photos.FindAsync(id);
+        
+        return photo; 
     }
 
     public async Task<Photo> UploadPhotoAsync(UploadPhotoRequest request)
@@ -45,34 +46,35 @@ public class PhotoService : IPhotoService
         return photo;
     }
 
-    public async Task<Photo?> UpdatePhotoAsync(int id, UpdatePhotoRequest request)
+    public async Task<bool> UpdatePhotoAsync(int id, UpdatePhotoRequest request)
     {
-        var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
-        
-        if (photo is null || !photo.AddedAt.CanEdit(EDIT_LIMIT_HOURS))
-        {
-            _logger.LogWarning("Photo {Id} - cannot edit, because time limit restriction", photo.Id);
-            return null;
-        }
+        var updatedCount = await _context.Photos
+            .Where(p => p.Id == id && p.AddedAt >= DateTime.UtcNow.AddHours(-EDIT_LIMIT_HOURS))
+            .ExecuteUpdateAsync(setters => setters
+                .SetProperty(p => p.Title, request.Title)
+                .SetProperty(p => p.UpdatedAt, DateTime.UtcNow));
 
-        photo.Title = request.Title;
-        photo.UpdatedAt = DateTime.UtcNow;
-        await _context.SaveChangesAsync();
-        
-        _logger.LogInformation("Photo {Id} updated", photo.Id);
-        return photo;
+        if (updatedCount > 0)
+        {
+            _logger.LogInformation("Photo {Id} updated", id);
+            return true;
+        }
+        _logger.LogInformation("Photo {Id} - cannot edit, because of time limit", id);
+        return false;
     }
 
     public async Task<bool> DeletePhotoAsync(int id)
     {
-        var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
-        if (photo is null)
-            return false;
+        var deletedCount = await _context.Photos
+            .Where(p => p.Id == id)
+            .ExecuteDeleteAsync();
 
-        _context.Photos.Remove(photo);
-        await _context.SaveChangesAsync();
-        
-        _logger.LogInformation("Photo with id:{Id} deleted", photo.Id);
-        return true;
+        if (deletedCount > 0)
+        {
+            _logger.LogInformation("Photo with id:{Id} deleted", id);
+            return true;
+        }
+        _logger.LogInformation("Photo not found id:{Id} not deleted", id);
+        return false;
     }
 }

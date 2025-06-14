@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VibeMoment.Requests;
 using VibeMoment.Services.Interfaces;
@@ -20,35 +21,40 @@ public class PhotosController : ControllerBase
     {
         var photo = await _photoService.GetPhotoAsync(id);
         
-        if (photo is null) 
-            return NotFound();
-        
-        return File(photo.Data, "image/jpeg");
+        if (photo is null)
+        {
+            return
+                NotFound($"Photo with id {id} not found");
+        }
+
+        return File(photo.Data,"image/jpeg");
     }
 
     [HttpPost("upload")]
+    [Authorize]
     public async Task<ActionResult> UploadPhotoRequest([FromForm] UploadPhotoRequest request)
     {
-        if (request.Photo?.Length is 0)
+        if (request.Photo.Length is 0)
             return BadRequest("Photo required");
 
         var photo = await _photoService.UploadPhotoAsync(request);
 
         return CreatedAtAction(nameof(GetPhoto), new { id = photo.Id }, photo);
-        
     }
 
     [HttpPut("{id:int}")]
+    [Authorize]
     public async Task<ActionResult> UpdatePhoto([FromRoute] int id, [FromBody] UpdatePhotoRequest request)
     {
-        var photo = await _photoService.UpdatePhotoAsync(id, request);
-        
-        return photo is null 
-            ? BadRequest("Photo not found or edit time expired") 
-            : Ok(photo);
+        var isUpdated = await _photoService.UpdatePhotoAsync(id, request);
+
+        return isUpdated
+            ? Ok("Photo updated")
+            : BadRequest("Photo not found or edit time expired");
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize]
     public async Task<ActionResult> DeletePhoto([FromRoute] int id)
     {
         var deleted = await _photoService.DeletePhotoAsync(id);
