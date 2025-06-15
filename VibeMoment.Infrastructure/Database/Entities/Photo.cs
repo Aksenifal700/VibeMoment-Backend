@@ -1,4 +1,4 @@
-namespace VibeMoment.Api.Database.Entities;
+namespace VibeMoment.Infrastructure.Database.Entities;
 
 public class Photo
 {

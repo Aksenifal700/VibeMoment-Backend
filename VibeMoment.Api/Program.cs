@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using VibeMoment.Api.Database;
-using VibeMoment.Api.MappingProfiles;
-using VibeMoment.Api.Services;
-using VibeMoment.Api.Services.Interfaces;
+using VibeMoment.BusinessLogic.Services.Interfaces;
+using VibeMoment.Infrastructure.Database;
+using VibeMoment.Infrastructure.MappingProfiles;
+using VibeMoment.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +30,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<IPhotoRepository, PhotoRepository>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPhotoService, PhotoService>();

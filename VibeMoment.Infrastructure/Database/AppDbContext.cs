@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using VibeMoment.Api.Database.Entities;
+using VibeMoment.Infrastructure.Database.Entities;
 
-namespace VibeMoment.Api.Database
+namespace VibeMoment.Infrastructure.Database
 {
     public class AppDbContext : IdentityDbContext<IdentityUser>
     {

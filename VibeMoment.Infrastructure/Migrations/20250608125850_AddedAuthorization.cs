@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace VibeMoment.Api.Migrations
+namespace VibeMoment.Infrastructure.Migrations
 {
     /// <inheritdoc />
     public partial class AddedAuthorization : Migration

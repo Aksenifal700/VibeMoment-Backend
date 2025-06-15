@@ -1,7 +1,7 @@
-using VibeMoment.Api.Requests;
-using VibeMoment.Api.Results;
+using VibeMoment.BusinessLogic.Requests;
+using VibeMoment.BusinessLogic.Results;
 
-namespace VibeMoment.Api.Services.Interfaces;
+namespace VibeMoment.BusinessLogic.Services.Interfaces;
 
 public interface IAuthService
 {

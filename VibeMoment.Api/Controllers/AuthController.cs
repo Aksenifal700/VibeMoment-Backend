@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using VibeMoment.Api.Requests;
-using VibeMoment.Api.Services.Interfaces;
+using VibeMoment.BusinessLogic.Requests;
+using VibeMoment.BusinessLogic.Services.Interfaces;
 
 namespace VibeMoment.Api.Controllers;
 

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VibeMoment.Api.Requests;
-using VibeMoment.Api.Services.Interfaces;
+using VibeMoment.BusinessLogic.Requests;
+using VibeMoment.BusinessLogic.Services.Interfaces;
 
 namespace VibeMoment.Api.Controllers;
 
@@ -27,19 +27,29 @@ public class PhotosController : ControllerBase
                 NotFound($"Photo with id {id} not found");
         }
 
-        return File(photo.Data,"image/jpeg");
+        return Ok(photo);
     }
 
     [HttpPost("upload")]
     [Authorize]
-    public async Task<ActionResult> UploadPhotoRequest([FromForm] UploadPhotoRequest request)
+    public async Task<ActionResult> UploadPhotoRequest(IFormFile photo, string title)
     {
-        if (request.Photo.Length is 0)
+        if (photo?.Length is 0 or null)
             return BadRequest("Photo required");
+    
+        using var stream = new MemoryStream();
+        await photo.CopyToAsync(stream);
 
-        var photo = await _photoService.UploadPhotoAsync(request);
+        var request = new UploadPhotoRequest
+        {
+            Title = title,
+            PhotoData = stream.ToArray(),
+            FileName = photo.FileName
+        };
 
-        return CreatedAtAction(nameof(GetPhoto), new { id = photo.Id }, photo);
+        var result = await _photoService.UploadPhotoAsync(request);
+
+        return CreatedAtAction(nameof(GetPhoto), new { id = result.Id }, result);
     }
 
     [HttpPut("{id:int}")]

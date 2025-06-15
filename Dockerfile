@@ -1,12 +1,17 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
-COPY VibeMoment/VibeMoment.csproj .
-RUN dotnet restore VibeMoment.csproj
-COPY VibeMoment/. .
-RUN dotnet publish -c Release -o /app/publish
+
+COPY ["VibeMoment.Api/VibeMoment.Api.csproj", "VibeMoment.Api/"]
+COPY ["VibeMoment.BusinessLogic/VibeMoment.BusinessLogic.csproj", "VibeMoment.BusinessLogic/"]
+COPY ["VibeMoment.Infrastructure/VibeMoment.Infrastructure.csproj", "VibeMoment.Infrastructure/"]
+
+RUN dotnet restore "VibeMoment.Api/VibeMoment.Api.csproj"
+COPY . .
+WORKDIR "/src/VibeMoment.Api"
+RUN dotnet publish "VibeMoment.Api.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 COPY --from=build /app/publish .
 EXPOSE 8080
-ENTRYPOINT ["dotnet", "VibeMoment.dll"]
+ENTRYPOINT ["dotnet", "VibeMoment.Api.dll"]

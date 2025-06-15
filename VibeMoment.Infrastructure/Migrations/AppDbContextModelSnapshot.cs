@@ -2,21 +2,18 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using VibeMoment.Api.Database;
+using VibeMoment.Infrastructure.Database;
 
 #nullable disable
 
-namespace VibeMoment.Api.Migrations
+namespace VibeMoment.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250608125850_AddedAuthorization")]
-    partial class AddedAuthorization
+    partial class AppDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

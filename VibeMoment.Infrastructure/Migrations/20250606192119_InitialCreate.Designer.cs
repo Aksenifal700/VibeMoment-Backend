@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using VibeMoment.Api.Database;
+using VibeMoment.Infrastructure.Database; 
 
 #nullable disable
 
-namespace VibeMoment.Api.Migrations
+namespace VibeMoment.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20250606192119_InitialCreate")]
