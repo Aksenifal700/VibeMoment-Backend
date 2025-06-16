@@ -1,5 +1,4 @@
-using VibeMoment.BusinessLogic.Requests;
-using VibeMoment.BusinessLogic.Results;
+using VibeMoment.BusinessLogic.DTOs;
 
 namespace VibeMoment.BusinessLogic.Services.Interfaces;
 
@@ -12,30 +11,34 @@ public class AuthService : IAuthService
         _authRepository = authRepository;
     }
 
-    public async Task<AuthResult> RegisterAsync(RegisterRequest register)
+    public async Task<AuthResultDto> RegisterAsync(RegisterUserDto registerDto)
     {
-        var success = await _authRepository.CreateUserAsync(register.Email, register.Password, register.Username);
-        
-        return new AuthResult
+        var success = await _authRepository.CreateUserAsync(
+            registerDto.Email, 
+            registerDto.Password, 
+            registerDto.UserName);
+            
+        return new AuthResultDto
         {
             Success = success,
             Message = success ? "User registered successfully" : "Registration failed"
         };
     }
 
-    public async Task<AuthResult> SignInAsync(SignInRequest signIn)
+    public async Task<AuthResultDto> SignInAsync(SigninUserDto signinDto)
     {
-        var success = await _authRepository.SignInAsync(signIn.UsernameOrEmail, signIn.Password);
-        
-        return new AuthResult
+        var success = await _authRepository.SignInAsync(signinDto.UsernameOrEmail , signinDto.Password);
+            
+        return new AuthResultDto
         {
             Success = success,
             Message = success ? "Signed in successfully" : "Invalid credentials"
         };
     }
 
-    public async Task SignOutAsync()
+    public async Task<bool> SignOutAsync()
     {
         await _authRepository.SignOutAsync();
+        return true;
     }
 }

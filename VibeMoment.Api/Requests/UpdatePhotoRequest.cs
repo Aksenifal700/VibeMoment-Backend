@@ -1,4 +1,4 @@
-namespace VibeMoment.BusinessLogic.Requests;
+namespace VibeMoment.Api.Requests;
 
 public class UpdatePhotoRequest
 {

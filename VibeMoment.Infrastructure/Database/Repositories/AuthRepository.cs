@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using VibeMoment.BusinessLogic.Services.Interfaces;
 
-namespace VibeMoment.Infrastructure.Repositories;
+namespace VibeMoment.Infrastructure.Database.Repositories;
 
 public class AuthRepository : IAuthRepository
 {
@@ -34,7 +34,7 @@ public class AuthRepository : IAuthRepository
 
         if (user is null) return false;
 
-        var result = await _signInManager.PasswordSignInAsync(user, password, false, true);
+        var result = await _signInManager.PasswordSignInAsync(user.UserName, password, false, true);
         return result.Succeeded;
     }
 

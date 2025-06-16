@@ -1,12 +1,11 @@
-using VibeMoment.BusinessLogic.Requests;
-using VibeMoment.BusinessLogic.Results;
+using VibeMoment.BusinessLogic.DTOs;
 
 namespace VibeMoment.BusinessLogic.Services.Interfaces;
 
 public interface IPhotoRepository
 {
-    Task<PhotoResult> GetByIdAsync(int id);
-    Task<PhotoResult> SavePhotoAsync(UploadPhotoRequest request);
-    Task<PhotoResult> UpdatePhotoAsync(int id, UpdatePhotoRequest request);
+    Task<PhotoDto?> GetByIdAsync(int id);                    
+    Task<PhotoDto> SavePhotoAsync(UploadPhotoDto uploadDto); 
+    Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto updateDto); 
     Task<bool> DeletePhotoAsync(int id);
 }

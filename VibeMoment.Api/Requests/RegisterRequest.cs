@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace VibeMoment.BusinessLogic.Requests;
+namespace VibeMoment.Api.Requests;
 
 public class RegisterRequest
 {

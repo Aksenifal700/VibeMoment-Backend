@@ -1,35 +1,34 @@
-using VibeMoment.BusinessLogic.Requests;
-using VibeMoment.BusinessLogic.Results;
+using VibeMoment.BusinessLogic.DTOs;
 
 namespace VibeMoment.BusinessLogic.Services.Interfaces;
 
-public class PhotoService : IPhotoService
-{
-    private readonly IPhotoRepository _photoRepository;
-    
-    public PhotoService(IPhotoRepository photoRepository)
+    public class PhotoService : IPhotoService
     {
-        _photoRepository = photoRepository;
-    }
+        private readonly IPhotoRepository _photoRepository;  
+        
+        public PhotoService(IPhotoRepository photoRepository)
+        {
+            _photoRepository = photoRepository;  
+        }
 
-    public async Task<PhotoResult?> GetPhotoAsync(int id)
-    {
-        return await _photoRepository.GetByIdAsync(id);
-    }
+        public async Task<PhotoDto?> GetPhotoAsync(int id)  
+        {
+            return await _photoRepository.GetByIdAsync(id);
+        }
 
-    public async Task<PhotoResult> UploadPhotoAsync(UploadPhotoRequest request)
-    {
-        return await _photoRepository.SavePhotoAsync(request);
-    }
+        public async Task<PhotoDto> UploadPhotoAsync(UploadPhotoDto uploadDto) 
+        {
+            return await _photoRepository.SavePhotoAsync(uploadDto);
+        }
 
-    public async Task<bool> UpdatePhotoAsync(int id, UpdatePhotoRequest request)
-    {
-        var result = await _photoRepository.UpdatePhotoAsync(id, request);
-        return result.Success;
-    }
+        public async Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto updateDto)  
+        {
+            return await _photoRepository.UpdatePhotoAsync(updateDto);
+        }
 
-    public async Task<bool> DeletePhotoAsync(int id)
-    {
-        return await _photoRepository.DeletePhotoAsync(id);
+        public async Task<bool> DeletePhotoAsync(int id)
+        {
+            return await _photoRepository.DeletePhotoAsync(id);
+        }
+        
     }
-}
