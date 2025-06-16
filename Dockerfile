@@ -1,7 +1,6 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-COPY ["VibeMoment.Api/VibeMoment.Api.csproj", "VibeMoment.Api/"]
 COPY ["VibeMoment.Infrastructure/VibeMoment.Infrastructure.csproj", "VibeMoment.Infrastructure/"]
 
 RUN dotnet restore "VibeMoment.Api/VibeMoment.Api.csproj"
