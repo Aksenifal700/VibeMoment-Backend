@@ -1,5 +1,5 @@
 
-namespace VibeMoment.BusinessLogic.Services.Interfaces;
+namespace VibeMoment.BusinessLogic.Interfaces.Repositories;
 
 public interface IAuthRepository
 {

@@ -1,6 +1,7 @@
 using VibeMoment.BusinessLogic.DTOs;
+using VibeMoment.BusinessLogic.DTOs.Authdtos;
 
-namespace VibeMoment.BusinessLogic.Services.Interfaces;
+namespace VibeMoment.BusinessLogic.Interfaces.Services;
 
 public interface IAuthService
 {

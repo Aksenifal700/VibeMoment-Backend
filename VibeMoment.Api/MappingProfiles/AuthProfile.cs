@@ -1,8 +1,7 @@
 using AutoMapper;
-using VibeMoment.Api.Requests;
 using VibeMoment.Api.Requests.Auth;
 using VibeMoment.Api.Responses;
-using VibeMoment.BusinessLogic.DTOs;
+using VibeMoment.BusinessLogic.DTOs.Authdtos;
 
 namespace VibeMoment.Api.MappingProfiles;
 

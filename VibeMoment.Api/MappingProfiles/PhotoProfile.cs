@@ -1,8 +1,7 @@
 using AutoMapper;
-using VibeMoment.Api.Requests;
 using VibeMoment.Api.Requests.Photo;
 using VibeMoment.Api.Responses;
-using VibeMoment.BusinessLogic.DTOs;
+using VibeMoment.BusinessLogic.DTOs.Photodtos;
 using VibeMoment.Infrastructure.Database.Entities;
 
 namespace VibeMoment.Api.MappingProfiles;
@@ -12,21 +11,14 @@ public class PhotoProfile : Profile
     public PhotoProfile()
     {
 
-        CreateMap<UploadPhotoRequest, UploadPhotoDto>()
-            .ForMember(dest => dest.PhotoData, opt => opt.Ignore())
-            .ForMember(dest => dest.FileName, opt => opt.Ignore());
-            
-        CreateMap<UpdatePhotoRequest, UpdatePhotoDto>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore());
+        CreateMap<UploadPhotoRequest, UploadPhotoDto>();
         
-        CreateMap<UploadPhotoDto, Photo>()
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.Data, opt => opt.MapFrom(src => src.PhotoData))
-            .ForMember(dest => dest.AddedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
-        
-        CreateMap<Photo, PhotoDto>()
-            .ForMember(dest => dest.Data, opt => opt.MapFrom(src => src.Data));
+        CreateMap<UpdatePhotoRequest, UpdatePhotoDto>();
+
+        CreateMap<UpdatePhotoDto, Photo>();
+
+        CreateMap<UploadPhotoDto, Photo>();
+        CreateMap<Photo, PhotoDto>();
 
         CreateMap<PhotoDto, PhotoResponse>();
 

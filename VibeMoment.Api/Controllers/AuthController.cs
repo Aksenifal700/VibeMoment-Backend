@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using VibeMoment.Api.Responses;
 using VibeMoment.Api.Requests.Auth;
-using VibeMoment.BusinessLogic.Services.Interfaces;
 using VibeMoment.BusinessLogic.DTOs;
 using AutoMapper;
+using VibeMoment.BusinessLogic.DTOs.Authdtos;
+using VibeMoment.BusinessLogic.Interfaces.Services;
 
 
 namespace VibeMoment.Api.Controllers;
@@ -48,9 +49,9 @@ public class AuthController : ControllerBase
     [HttpPost("signout")]
     public async Task<ActionResult<AuthResponse>> SignOut()
     {
-        var isSucces = await _authService.SignOutAsync();
+        var isSuccess = await _authService.SignOutAsync();
         
-        if (isSucces)
+        if (isSuccess)
         {
             return Ok();
         }

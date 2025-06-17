@@ -1,17 +1,14 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using VibeMoment.BusinessLogic.DTOs;
-using VibeMoment.BusinessLogic.Services.Interfaces;
+using VibeMoment.BusinessLogic.DTOs.Photodtos;
+using VibeMoment.BusinessLogic.Interfaces.Repositories;
 using VibeMoment.Infrastructure.Database.Entities;
 
 namespace VibeMoment.Infrastructure.Database.Repositories;
 
 public class PhotoRepository : IPhotoRepository
 {
-    
-    private const int EDIT_LIMIT_HOURS = 1;
-    
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
     private readonly ILogger<PhotoRepository> _logger;
@@ -23,20 +20,20 @@ public class PhotoRepository : IPhotoRepository
         _logger = logger;
     }
 
-    public async Task<PhotoDto?> GetByIdAsync(int id) {
+    public async Task<PhotoDto?> GetByIdAsync(int id)
+    {
         var photo = await _context.Photos.FindAsync(id);
-    
-        if (photo is null) {
-            return null;
-        }
-
-        return _mapper.Map<PhotoDto>(photo);  
+        return photo is null 
+            ? null 
+            : _mapper.Map<PhotoDto>(photo);
     }
 
-    public async Task<PhotoDto> SavePhotoAsync(UploadPhotoDto request) {
-        var photo = new Photo {
+    public async Task<PhotoDto> SavePhotoAsync(UploadPhotoDto request) 
+    {
+        var photo = new Photo
+        {
             Title = request.Title,
-            Data = request.PhotoData,
+            Data = request.Data,
             AddedAt = DateTime.UtcNow
         };
 
@@ -47,20 +44,17 @@ public class PhotoRepository : IPhotoRepository
     }
     public async Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto request)
     {
-        var updatedCount = await _context.Photos
-            .Where(p => p.Id == request.Id && p.AddedAt >= DateTime.UtcNow.AddHours(-EDIT_LIMIT_HOURS))  // ← request.Id
-            .ExecuteUpdateAsync(setters => setters
-                .SetProperty(p => p.Title, request.Title)
-                .SetProperty(p => p.UpdatedAt, DateTime.UtcNow));
+        var existingPhoto = await _context.Photos.FindAsync(request.Id);
+        if (existingPhoto is null)
+            return null;
+        
+        _mapper.Map(request, existingPhoto); //fixed problem with creating a new photo instead of updating photo
+        
+        await _context.SaveChangesAsync();
 
-        if (updatedCount > 0)
-        {
-            _logger.LogInformation("Photo {Id} updated", request.Id);  
-            var photo = await _context.Photos.FindAsync(request.Id);  
-            return _mapper.Map<PhotoDto>(photo);
-        }
+        _logger.LogInformation("Photo {Id} updated", request.Id);
 
-        return null;
+        return _mapper.Map<PhotoDto>(existingPhoto);
     }
 
     public async Task<bool> DeletePhotoAsync(int id)

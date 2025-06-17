@@ -1,10 +1,13 @@
-using VibeMoment.BusinessLogic.DTOs;
-using VibeMoment.BusinessLogic.Services.Interfaces;
+using VibeMoment.BusinessLogic.DTOs.Photodtos;
+using VibeMoment.BusinessLogic.Interfaces.Repositories;
+using VibeMoment.BusinessLogic.Interfaces.Services;
 
 namespace VibeMoment.BusinessLogic.Services;
 
     public class PhotoService : IPhotoService
     {
+        private const int EDIT_LIMIT_HOURS = 1;
+        
         private readonly IPhotoRepository _photoRepository;  
         
         public PhotoService(IPhotoRepository photoRepository)
@@ -24,6 +27,16 @@ namespace VibeMoment.BusinessLogic.Services;
 
         public async Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto updateDto)  
         {
+            var photo = await _photoRepository.GetByIdAsync(updateDto.Id);
+            if (photo is null)
+                  return null; 
+        
+            
+           
+            if ((DateTime.UtcNow - photo.AddedAt).TotalHours < EDIT_LIMIT_HOURS)
+            {
+                updateDto.UpdatedAt = DateTime.UtcNow;
+            }
             return await _photoRepository.UpdatePhotoAsync(updateDto);
         }
 

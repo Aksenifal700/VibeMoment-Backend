@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VibeMoment.Api.MappingProfiles;
+using VibeMoment.BusinessLogic.Interfaces.Repositories;
+using VibeMoment.BusinessLogic.Interfaces.Services;
 using VibeMoment.BusinessLogic.Services;
-using VibeMoment.BusinessLogic.Services.Interfaces;
 using VibeMoment.Infrastructure.Database;
 using VibeMoment.Infrastructure.Database.Repositories;
 
@@ -15,8 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddOpenApi();
 
-builder.Services.AddAutoMapper(typeof(PhotoProfile));
-builder.Services.AddAutoMapper(typeof(AuthProfile));
+builder.Services.AddAutoMapper(typeof(PhotoProfile),typeof(AuthProfile));
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(

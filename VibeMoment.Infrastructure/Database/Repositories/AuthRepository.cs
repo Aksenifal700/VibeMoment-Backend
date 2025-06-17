@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Identity;
-using VibeMoment.BusinessLogic.Services.Interfaces;
+using VibeMoment.BusinessLogic.Interfaces.Repositories;
 
 namespace VibeMoment.Infrastructure.Database.Repositories;
 

@@ -1,5 +1,7 @@
 using VibeMoment.BusinessLogic.DTOs;
-using VibeMoment.BusinessLogic.Services.Interfaces;
+using VibeMoment.BusinessLogic.DTOs.Authdtos;
+using VibeMoment.BusinessLogic.Interfaces.Repositories;
+using VibeMoment.BusinessLogic.Interfaces.Services;
 
 namespace VibeMoment.BusinessLogic.Services;
 

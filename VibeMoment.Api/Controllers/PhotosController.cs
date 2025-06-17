@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VibeMoment.Api.Responses;
-using VibeMoment.BusinessLogic.Services.Interfaces;
 using VibeMoment.BusinessLogic.DTOs;
 using AutoMapper;
 using VibeMoment.Api.Requests.Photo;
+using VibeMoment.BusinessLogic.DTOs.Photodtos;
+using VibeMoment.BusinessLogic.Interfaces.Services;
 
 namespace VibeMoment.Api.Controllers;
 
@@ -39,7 +40,7 @@ public class PhotosController : ControllerBase
     [Authorize]
     public async Task<ActionResult<PhotoResponse>> UploadPhoto([FromForm] UploadPhotoRequest request)
     {
-        if (request.Photo?.Length is 0 or null)
+        if (request.Photo.Length is 0)
         {
             return BadRequest();
         }
@@ -48,8 +49,8 @@ public class PhotosController : ControllerBase
         await request.Photo.CopyToAsync(stream);
         
         var uploadDto = _mapper.Map<UploadPhotoDto>(request);
-        uploadDto.PhotoData = stream.ToArray();
-        uploadDto.FileName = request.Photo.FileName ?? "";
+        uploadDto.Data = stream.ToArray();
+        uploadDto.FileName = request.Photo.FileName;
        
 
         var result = await _photoService.UploadPhotoAsync(uploadDto);

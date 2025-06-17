@@ -1,4 +1,4 @@
-namespace VibeMoment.BusinessLogic.DTOs;
+namespace VibeMoment.BusinessLogic.DTOs.Authdtos;
 
 public class AuthResultDto
 {
