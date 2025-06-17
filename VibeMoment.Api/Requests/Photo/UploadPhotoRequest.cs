@@ -1,4 +1,4 @@
-namespace VibeMoment.Api.Requests;
+namespace VibeMoment.Api.Requests.Photo;
 
 public class UploadPhotoRequest
 {

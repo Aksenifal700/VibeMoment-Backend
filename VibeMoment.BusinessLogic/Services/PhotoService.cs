@@ -1,6 +1,7 @@
 using VibeMoment.BusinessLogic.DTOs;
+using VibeMoment.BusinessLogic.Services.Interfaces;
 
-namespace VibeMoment.BusinessLogic.Services.Interfaces;
+namespace VibeMoment.BusinessLogic.Services;
 
     public class PhotoService : IPhotoService
     {

@@ -1,6 +1,6 @@
 namespace VibeMoment.BusinessLogic.DTOs;
 
-public class RegisterUserDto
+public class RegisterDto
 {
     public string Email { get; set; }
     public string UserName { get; set; } 

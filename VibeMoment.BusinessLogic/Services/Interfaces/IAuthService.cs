@@ -4,8 +4,8 @@ namespace VibeMoment.BusinessLogic.Services.Interfaces;
 
 public interface IAuthService
 {
-    Task<AuthResultDto> RegisterAsync(RegisterUserDto registerDto);
-    Task<AuthResultDto> SignInAsync(SigninUserDto signinDto);
+    Task<bool> RegisterAsync(RegisterDto registerDto);
+    Task<bool> SignInAsync(SigninDto signinDto);
     Task<bool> SignOutAsync();
 }
 

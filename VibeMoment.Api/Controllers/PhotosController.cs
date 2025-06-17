@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VibeMoment.Api.Requests;
 using VibeMoment.Api.Responses;
 using VibeMoment.BusinessLogic.Services.Interfaces;
 using VibeMoment.BusinessLogic.DTOs;
 using AutoMapper;
-using System.Security.Claims;
+using VibeMoment.Api.Requests.Photo;
 
 namespace VibeMoment.Api.Controllers;
 
@@ -36,18 +35,13 @@ public class PhotosController : ControllerBase
         return File(photo.Data, "image/jpeg");
     }
 
-    [HttpPost("upload")]
+    [HttpPost]
     [Authorize]
-    public async Task<ActionResult<UploadPhotoResponse>> UploadPhoto([FromForm] UploadPhotoRequest request)
+    public async Task<ActionResult<PhotoResponse>> UploadPhoto([FromForm] UploadPhotoRequest request)
     {
         if (request.Photo?.Length is 0 or null)
         {
-            return BadRequest(new UploadPhotoResponse 
-            { 
-                Success = false, 
-                Message = "",
-                ErrorMessage = "Photo file is required" 
-            });
+            return BadRequest();
         }
 
         using var stream = new MemoryStream();
@@ -62,29 +56,16 @@ public class PhotosController : ControllerBase
 
         if (result is null)
         {
-            return BadRequest(new UploadPhotoResponse 
-            { 
-                Success = false, 
-                Message = "",
-                ErrorMessage = "Failed to upload photo" 
-            });
+            return StatusCode(500);
         }
 
         var photoResponse = _mapper.Map<PhotoResponse>(result);
-        var response = new UploadPhotoResponse
-        {
-            Success = true,
-            Message = "Photo uploaded successfully",
-            ErrorMessage = "",
-            Photo = photoResponse
-        };
-
-        return CreatedAtAction(nameof(GetPhoto), new { id = result.Id }, response);
+        return CreatedAtAction(nameof(GetPhoto), new { id = result.Id }, photoResponse);
     }
 
     [HttpPut("{id:int}")]
     [Authorize]
-    public async Task<ActionResult<UpdatePhotoResponse>> UpdatePhoto([FromRoute] int id, [FromBody] UpdatePhotoRequest request)
+    public async Task<ActionResult<PhotoResponse>> UpdatePhoto([FromRoute] int id, [FromBody] UpdatePhotoRequest request)
     {
         var updateDto = _mapper.Map<UpdatePhotoDto>(request);
         updateDto.Id = id;
@@ -93,48 +74,24 @@ public class PhotosController : ControllerBase
 
         if (updatedPhoto is null)
         {
-            return BadRequest(new UpdatePhotoResponse 
-            { 
-                Success = false, 
-                Message = "",
-                ErrorMessage = "Photo not found or edit time expired" 
-            });
+            return NotFound();
         }
 
         var photoResponse = _mapper.Map<PhotoResponse>(updatedPhoto);
-        var response = new UpdatePhotoResponse
-        {
-            Success = true,
-            Message = "Photo updated successfully",
-            ErrorMessage = "",
-            Photo = photoResponse
-        };
-
-        return Ok(response);
+        return Ok(photoResponse);
     }
 
     [HttpDelete("{id:int}")]
     [Authorize]
-    public async Task<ActionResult<DeletePhotoResponse>> DeletePhoto([FromRoute] int id)
+    public async Task<ActionResult<PhotoResponse>> DeletePhoto([FromRoute] int id)
     {
         var deleted = await _photoService.DeletePhotoAsync(id);
         
         if (!deleted)
         {
-            return NotFound(new DeletePhotoResponse 
-            { 
-                Success = false, 
-                Message = "",
-                ErrorMessage = "Photo not found" 
-            });
+            return NotFound();
         }
-
-        return Ok(new DeletePhotoResponse 
-        { 
-            Success = true, 
-            Message = "Photo deleted successfully",
-            ErrorMessage = ""
-        });
+        return NoContent();
     }
     
 }
