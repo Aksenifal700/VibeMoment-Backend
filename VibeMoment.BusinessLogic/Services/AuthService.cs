@@ -1,5 +1,4 @@
-using VibeMoment.BusinessLogic.DTOs;
-using VibeMoment.BusinessLogic.DTOs.Authdtos;
+using VibeMoment.BusinessLogic.DTOs.Auth;
 using VibeMoment.BusinessLogic.Interfaces.Repositories;
 using VibeMoment.BusinessLogic.Interfaces.Services;
 
@@ -17,15 +16,15 @@ public class AuthService : IAuthService
     public async Task<bool> RegisterAsync(RegisterDto registerDto)
     {
         return await _authRepository.CreateUserAsync(
-            registerDto.Email, 
-            registerDto.Password, 
+            registerDto.Email,
+            registerDto.Password,
             registerDto.UserName);
     }
 
     public async Task<bool> SignInAsync(SigninDto signinDto)
     {
         return await _authRepository.SignInAsync(
-            signinDto.UsernameOrEmail , 
+            signinDto.UsernameOrEmail,
             signinDto.Password);
     }
 

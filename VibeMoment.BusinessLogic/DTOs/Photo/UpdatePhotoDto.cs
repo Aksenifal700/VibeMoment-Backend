@@ -1,4 +1,4 @@
-namespace VibeMoment.BusinessLogic.DTOs.Photodtos;
+namespace VibeMoment.BusinessLogic.DTOs.Photo;
 
 public class UpdatePhotoDto
 {
@@ -6,5 +6,5 @@ public class UpdatePhotoDto
     public string Title { get; set; }
     public string? FileName { get; set; }
     public DateTime AddedAt { get; set; } = DateTime.UtcNow;
-    public DateTime? UpdatedAt { get; set; } 
+    public DateTime? UpdatedAt { get; set; }
 }

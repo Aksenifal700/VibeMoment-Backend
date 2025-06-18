@@ -6,7 +6,7 @@ public class SignInRequest
 {
     [Required]
     public string UsernameOrEmail { get; set; }
-
+    
     [Required]
     public string Password { get; set; }
 

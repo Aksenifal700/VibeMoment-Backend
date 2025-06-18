@@ -3,7 +3,7 @@ using VibeMoment.Api.Responses;
 using VibeMoment.Api.Requests.Auth;
 using VibeMoment.BusinessLogic.DTOs;
 using AutoMapper;
-using VibeMoment.BusinessLogic.DTOs.Authdtos;
+using VibeMoment.BusinessLogic.DTOs.Auth;
 using VibeMoment.BusinessLogic.Interfaces.Services;
 
 
@@ -23,38 +23,39 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterRequest request)
+    public async Task<ActionResult> Register([FromBody] RegisterRequest request)
     {
         var registerDto = _mapper.Map<RegisterDto>(request);
-        
-        var success = await _authService.RegisterAsync(registerDto);
-        
-        return success 
+
+        var isSuccess = await _authService.RegisterAsync(registerDto);
+
+        return isSuccess
             ? Ok()
             : BadRequest();
     }
 
     [HttpPost("signin")]
-    public async Task<ActionResult<AuthResponse>> SignIn([FromBody] SignInRequest request)
+    public async Task<ActionResult> SignIn([FromBody] SignInRequest request)
     {
         var loginDto = _mapper.Map<SigninDto>(request);
-        
-        var success = await _authService.SignInAsync(loginDto);
-        
-        return success 
+
+        var isSuccess = await _authService.SignInAsync(loginDto);
+
+        return isSuccess
             ? Ok()
             : Unauthorized();
     }
 
     [HttpPost("signout")]
-    public async Task<ActionResult<AuthResponse>> SignOut()
+    public async Task<ActionResult> SignOut()
     {
         var isSuccess = await _authService.SignOutAsync();
-        
+
         if (isSuccess)
         {
             return Ok();
         }
+
         return BadRequest();
     }
 }

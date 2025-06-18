@@ -1,7 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using VibeMoment.BusinessLogic.DTOs.Photodtos;
+using VibeMoment.BusinessLogic.DTOs.Photo;
 using VibeMoment.BusinessLogic.Interfaces.Repositories;
 using VibeMoment.Infrastructure.Database.Entities;
 
@@ -12,7 +12,7 @@ public class PhotoRepository : IPhotoRepository
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
     private readonly ILogger<PhotoRepository> _logger;
-    
+
     public PhotoRepository(AppDbContext context, IMapper mapper, ILogger<PhotoRepository> logger)
     {
         _context = context;
@@ -23,33 +23,30 @@ public class PhotoRepository : IPhotoRepository
     public async Task<PhotoDto?> GetByIdAsync(int id)
     {
         var photo = await _context.Photos.FindAsync(id);
-        return photo is null 
-            ? null 
+        return photo is null
+            ? null
             : _mapper.Map<PhotoDto>(photo);
     }
 
-    public async Task<PhotoDto> SavePhotoAsync(UploadPhotoDto request) 
+    public async Task<PhotoDto> SavePhotoAsync(UploadPhotoDto request)
     {
-        var photo = new Photo
-        {
-            Title = request.Title,
-            Data = request.Data,
-            AddedAt = DateTime.UtcNow
-        };
+        var photo = _mapper.Map<Photo>(request);
+        photo.AddedAt = DateTime.UtcNow;
 
         _context.Photos.Add(photo);
         await _context.SaveChangesAsync();
-    
+
         return _mapper.Map<PhotoDto>(photo);
     }
+
     public async Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto request)
     {
         var existingPhoto = await _context.Photos.FindAsync(request.Id);
         if (existingPhoto is null)
-            return null;
-        
+            throw new NotImplementedException();
+
         _mapper.Map(request, existingPhoto); //fixed problem with creating a new photo instead of updating photo
-        
+
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Photo {Id} updated", request.Id);
