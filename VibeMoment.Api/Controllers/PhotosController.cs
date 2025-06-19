@@ -31,8 +31,9 @@ public class PhotosController : ControllerBase
         {
             return NotFound(new { Success = false, Message = $"Photo with id {id} not found" });
         }
-
-        return File(photo.Data, "image/jpeg");
+        
+        var response = _mapper.Map<PhotoResponse>(photo);
+        return Ok(response);
     }
 
     [HttpPost]
@@ -54,7 +55,12 @@ public class PhotosController : ControllerBase
         var result = await _photoService.UploadPhotoAsync(uploadDto);
         
         var response = _mapper.Map<PhotoResponse>(result);
-        return Ok(response);
+        
+        return CreatedAtAction(
+            nameof(GetPhoto), 
+            new { id = response.Id }, 
+            response
+        );
     }
 
     [HttpPut("{id:int}")]
@@ -66,12 +72,7 @@ public class PhotosController : ControllerBase
         updateDto.Id = id;
 
         var updatedPhoto = await _photoService.UpdatePhotoAsync(updateDto);
-
-        if (updatedPhoto is null)
-        {
-            return NotFound();
-        }
-
+        
         var photoResponse = _mapper.Map<PhotoResponse>(updatedPhoto);
         return Ok(photoResponse);
     }

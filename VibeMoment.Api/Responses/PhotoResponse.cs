@@ -6,4 +6,5 @@ public class PhotoResponse
     public string FileName { get; set; }
     public string Title { get; set; }
     public DateTime AddedAt { get; set; }
+    public string ImageData { get; set; }
 }

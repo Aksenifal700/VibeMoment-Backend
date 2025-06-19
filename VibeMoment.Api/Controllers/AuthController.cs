@@ -51,11 +51,9 @@ public class AuthController : ControllerBase
     {
         var isSuccess = await _authService.SignOutAsync();
 
-        if (isSuccess)
-        {
-            return Ok();
-        }
+        return isSuccess
+            ? Ok()
+            : BadRequest();
 
-        return BadRequest();
     }
 }

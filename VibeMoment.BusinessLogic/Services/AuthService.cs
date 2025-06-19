@@ -13,19 +13,19 @@ public class AuthService : IAuthService
         _authRepository = authRepository;
     }
 
-    public async Task<bool> RegisterAsync(RegisterDto registerDto)
+    public async Task<bool> RegisterAsync(RegisterDto dto)
     {
         return await _authRepository.CreateUserAsync(
-            registerDto.Email,
-            registerDto.Password,
-            registerDto.UserName);
+            dto.Email,
+            dto.Password,
+            dto.UserName);
     }
 
-    public async Task<bool> SignInAsync(SigninDto signinDto)
+    public async Task<bool> SignInAsync(SigninDto dto)
     {
         return await _authRepository.SignInAsync(
-            signinDto.UsernameOrEmail,
-            signinDto.Password);
+            dto.UsernameOrEmail,
+            dto.Password);
     }
 
     public async Task<bool> SignOutAsync()

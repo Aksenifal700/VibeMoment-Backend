@@ -28,9 +28,9 @@ public class PhotoRepository : IPhotoRepository
             : _mapper.Map<PhotoDto>(photo);
     }
 
-    public async Task<PhotoDto> SavePhotoAsync(UploadPhotoDto request)
+    public async Task<PhotoDto> SavePhotoAsync(UploadPhotoDto dto)
     {
-        var photo = _mapper.Map<Photo>(request);
+        var photo = _mapper.Map<Photo>(dto);
         photo.AddedAt = DateTime.UtcNow;
 
         _context.Photos.Add(photo);
@@ -39,17 +39,17 @@ public class PhotoRepository : IPhotoRepository
         return _mapper.Map<PhotoDto>(photo);
     }
 
-    public async Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto request)
+    public async Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto dto)
     {
-        var existingPhoto = await _context.Photos.FindAsync(request.Id);
-        if (existingPhoto is null)
+       var existingPhoto = await _context.Photos.FindAsync(dto.Id);
+        if (existingPhoto is null) 
             throw new NotImplementedException();
 
-        _mapper.Map(request, existingPhoto); //fixed problem with creating a new photo instead of updating photo
+        _mapper.Map(dto, existingPhoto); //fixed problem with creating a new photo instead of updating photo
 
         await _context.SaveChangesAsync();
 
-        _logger.LogInformation("Photo {Id} updated", request.Id);
+        _logger.LogInformation("Photo {Id} updated", dto.Id);
 
         return _mapper.Map<PhotoDto>(existingPhoto);
     }

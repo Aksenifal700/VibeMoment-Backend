@@ -19,6 +19,8 @@ public class PhotoProfile : Profile
         CreateMap<UploadPhotoDto, Photo>();
         CreateMap<Photo, PhotoDto>();
 
-        CreateMap<PhotoDto, PhotoResponse>();
+        CreateMap<PhotoDto, PhotoResponse>()
+            .ForMember(dest => dest.ImageData, 
+            opt => opt.MapFrom(src => Convert.ToBase64String(src.Data)));
     }
 }

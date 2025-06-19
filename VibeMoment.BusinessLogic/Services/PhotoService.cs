@@ -21,24 +21,24 @@ public class PhotoService : IPhotoService
         return await _photoRepository.GetByIdAsync(id);
     }
 
-    public async Task<PhotoDto> UploadPhotoAsync(UploadPhotoDto uploadDto)
+    public async Task<PhotoDto> UploadPhotoAsync(UploadPhotoDto dto)
     {
-        return await _photoRepository.SavePhotoAsync(uploadDto);
+        return await _photoRepository.SavePhotoAsync(dto);
     }
 
-    public async Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto updateDto)
+    public async Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto dto)
     {
-        var photo = await _photoRepository.GetByIdAsync(updateDto.Id);
+        var photo = await _photoRepository.GetByIdAsync(dto.Id);
         if (photo is null)
            throw new NotImplementedException();
 
 
-        if ((DateTime.UtcNow - photo.AddedAt).TotalHours < EDIT_LIMIT_HOURS)
+        if ((DateTime.UtcNow - photo.AddedAt).TotalHours >= EDIT_LIMIT_HOURS)
         {
-            updateDto.UpdatedAt = DateTime.UtcNow;
+            throw new NotImplementedException($"Cannot edit photo after {EDIT_LIMIT_HOURS} hours");
         }
-
-        return await _photoRepository.UpdatePhotoAsync(updateDto);
+        dto.UpdatedAt = DateTime.UtcNow;
+        return await _photoRepository.UpdatePhotoAsync(dto);
     }
 
     public async Task DeletePhotoAsync(int id)
