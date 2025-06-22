@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using VibeMoment.Api.MappingProfiles;
+using VibeMoment.Api.Middlewares;
 using VibeMoment.BusinessLogic.Interfaces.Repositories;
 using VibeMoment.BusinessLogic.Interfaces.Services;
 using VibeMoment.BusinessLogic.Services;
@@ -49,6 +50,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

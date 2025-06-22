@@ -1,5 +1,5 @@
-using System.Globalization;
 using VibeMoment.BusinessLogic.DTOs.Photo;
+using VibeMoment.BusinessLogic.Exceptions;
 using VibeMoment.BusinessLogic.Interfaces.Repositories;
 using VibeMoment.BusinessLogic.Interfaces.Services;
 
@@ -30,12 +30,12 @@ public class PhotoService : IPhotoService
     {
         var photo = await _photoRepository.GetByIdAsync(dto.Id);
         if (photo is null)
-           throw new NotImplementedException();
+           throw new NotFoundException("Photo not found");
 
 
         if ((DateTime.UtcNow - photo.AddedAt).TotalHours >= EDIT_LIMIT_HOURS)
         {
-            throw new NotImplementedException($"Cannot edit photo after {EDIT_LIMIT_HOURS} hours");
+            throw new BusinessLogicException($"Cannot edit photo after {EDIT_LIMIT_HOURS} hours");
         }
         dto.UpdatedAt = DateTime.UtcNow;
         return await _photoRepository.UpdatePhotoAsync(dto);
@@ -45,7 +45,7 @@ public class PhotoService : IPhotoService
     {
         var photo = await _photoRepository.GetByIdAsync(id);
         if (photo is null)
-            throw new NotImplementedException();
+            throw new NotFoundException("Photo not found");
          await _photoRepository.DeletePhotoAsync(id);
     }
 }

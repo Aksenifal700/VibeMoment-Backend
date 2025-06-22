@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using VibeMoment.Api.Responses;
 using VibeMoment.Api.Requests.Auth;
-using VibeMoment.BusinessLogic.DTOs;
 using AutoMapper;
 using VibeMoment.BusinessLogic.DTOs.Auth;
 using VibeMoment.BusinessLogic.Interfaces.Services;
