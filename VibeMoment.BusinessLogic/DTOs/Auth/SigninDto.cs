@@ -1,7 +1,9 @@
 namespace VibeMoment.BusinessLogic.DTOs.Auth;
 
-public class SigninDto
+public record SigninDto
 {
-    public string UsernameOrEmail { get; set; }
-    public string Password { get; set; }
+    public string UsernameOrEmail { get; init; }
+    public string Password { get; init; }
 }
+
+   

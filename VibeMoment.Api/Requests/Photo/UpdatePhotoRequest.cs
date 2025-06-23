@@ -1,6 +1,9 @@
 namespace VibeMoment.Api.Requests.Photo;
 
-public class UpdatePhotoRequest
+public record UpdatePhotoRequest
 {
-    public string Title { get; set; }
+    public string Title { get; init; }
 }
+  
+
+   

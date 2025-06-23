@@ -1,4 +1,3 @@
-using System.Net;
 using VibeMoment.Api.Responses;
 using VibeMoment.BusinessLogic.Exceptions;
 
@@ -31,7 +30,7 @@ public class ExceptionHandlingMiddleware
     {
         _logger.LogError(exception, "An unexpected error occurred.");
         
-        ExceptionResponse response = exception switch
+        var response = exception switch
         {
             NotFoundException notFoundEx => new ExceptionResponse(notFoundEx.StatusCode, notFoundEx.Message),
             BusinessLogicException businessEx => new ExceptionResponse(businessEx.StatusCode, businessEx.Message)

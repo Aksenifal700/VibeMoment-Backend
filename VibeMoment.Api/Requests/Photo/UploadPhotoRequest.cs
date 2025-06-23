@@ -1,8 +1,9 @@
 namespace VibeMoment.Api.Requests.Photo;
 
-public class UploadPhotoRequest
+public record UploadPhotoRequest
 {
-    public string Title { get; set; }
-
-    public IFormFile Photo { get; set; }
+       public string Title { get; init; }
+       public IFormFile Photo { get; init; }
 }
+
+   

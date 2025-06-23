@@ -1,15 +1,21 @@
 using AutoMapper;
+using VibeMoment.Api.Requests.Auth;
 using VibeMoment.Api.Requests.Photo;
 using VibeMoment.Api.Responses;
+using VibeMoment.BusinessLogic.DTOs.Auth;
 using VibeMoment.BusinessLogic.DTOs.Photo;
 using VibeMoment.Infrastructure.Database.Entities;
 
-namespace VibeMoment.Api.MappingProfiles;
-
-public class PhotoProfile : Profile
+namespace VibeMoment.Api.Configurations;
+public class AutoMapperProfile : Profile
 {
-    public PhotoProfile()
+    public AutoMapperProfile()
     {
+        // Mapper for Auth
+        CreateMap<RegisterRequest, RegisterDto>();
+        CreateMap<SignInRequest, SigninDto>();
+        
+        //Mapper for Photo
         CreateMap<UploadPhotoRequest, UploadPhotoDto>();
 
         CreateMap<UpdatePhotoRequest, UpdatePhotoDto>();
@@ -21,6 +27,6 @@ public class PhotoProfile : Profile
 
         CreateMap<PhotoDto, PhotoResponse>()
             .ForMember(dest => dest.ImageData, 
-            opt => opt.MapFrom(src => Convert.ToBase64String(src.Data)));
+                opt => opt.MapFrom(src => Convert.ToBase64String(src.Data)));
     }
 }

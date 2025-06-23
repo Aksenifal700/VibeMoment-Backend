@@ -2,13 +2,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VibeMoment.Api.Requests.Auth;
 
-public class SignInRequest
+public record SignInRequest
 {
     [Required]
-    public string UsernameOrEmail { get; set; }
-    
-    [Required]
-    public string Password { get; set; }
+    public string UsernameOrEmail { get; init; }
 
-    public bool RememberMe { get; set; }
+    [Required]
+    public string Password { get; init; }
+
+    public bool RememberMe { get; init; }
 }

@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VibeMoment.Api.Responses;
-using VibeMoment.BusinessLogic.DTOs;
 using AutoMapper;
 using VibeMoment.Api.Requests.Photo;
 using VibeMoment.BusinessLogic.DTOs.Photo;
@@ -49,8 +48,8 @@ public class PhotosController : ControllerBase
         await request.Photo.CopyToAsync(stream);
 
         var uploadDto = _mapper.Map<UploadPhotoDto>(request);
-        uploadDto.Data = stream.ToArray();
-        uploadDto.FileName = request.Photo.FileName;
+        uploadDto = uploadDto with { Data = stream.ToArray() };
+        uploadDto = uploadDto with { FileName = request.Photo.FileName };
         
         var result = await _photoService.UploadPhotoAsync(uploadDto);
         
@@ -69,7 +68,7 @@ public class PhotosController : ControllerBase
         [FromBody] UpdatePhotoRequest request)
     {
         var updateDto = _mapper.Map<UpdatePhotoDto>(request);
-        updateDto.Id = id;
+        updateDto = updateDto with { Id = id };
 
         var updatedPhoto = await _photoService.UpdatePhotoAsync(updateDto);
         
