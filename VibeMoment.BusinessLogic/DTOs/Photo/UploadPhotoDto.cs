@@ -1,10 +1,11 @@
 namespace VibeMoment.BusinessLogic.DTOs.Photo;
 
-public record UploadPhotoDto
+public class UploadPhotoDto
 {
-    public string Title { get; init; }
-    public byte[] Data { get; init; }
-    public string? FileName { get; init; }
+    public string Title { get; set; }
+    public byte[] Data { get; set; }
+    public string? FileName { get; set; }
 }
+
 
 

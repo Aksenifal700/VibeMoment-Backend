@@ -6,6 +6,6 @@ public class Photo
     public string Title { get; set; }
     public byte[] Data { get; set; } = [];
 
-    public DateTime AddedAt { get; set; } = DateTime.UtcNow;
+    public DateTime AddedAt { get; set; } 
     public DateTime? UpdatedAt { get; set; }
 }

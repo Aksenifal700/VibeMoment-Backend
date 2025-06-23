@@ -38,7 +38,7 @@ public class PhotoService : IPhotoService
             throw new BusinessLogicException($"Cannot edit photo after {EDIT_LIMIT_HOURS} hours");
         }
 
-        dto = dto with { UpdatedAt = DateTime.UtcNow };
+        dto.UpdatedAt = DateTime.UtcNow;
         return await _photoRepository.UpdatePhotoAsync(dto);
     }
 

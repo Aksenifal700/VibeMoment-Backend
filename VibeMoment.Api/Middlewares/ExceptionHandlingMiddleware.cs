@@ -1,4 +1,4 @@
-using VibeMoment.Api.Responses;
+using VibeMoment.Api.Models.Responses;
 using VibeMoment.BusinessLogic.Exceptions;
 
 namespace VibeMoment.Api.Middlewares;

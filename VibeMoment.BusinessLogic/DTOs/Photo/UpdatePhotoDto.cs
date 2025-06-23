@@ -1,10 +1,10 @@
 namespace VibeMoment.BusinessLogic.DTOs.Photo;
 
-public record UpdatePhotoDto
+public class UpdatePhotoDto
 {
-    public int Id { get; init; }
-    public string Title { get; init; }
-    public string? FileName { get; init; }
-    public DateTime? UpdatedAt { get; init; }
-    public DateTime AddedAt { get; init; } = DateTime.UtcNow;
+    public int Id { get; set; }
+    public string Title { get; set; }
+    public string? FileName { get; set; }
+    public DateTime AddedAt { get; set; } 
+    public DateTime? UpdatedAt { get; set; }
 }
