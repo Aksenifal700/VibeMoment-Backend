@@ -1,10 +1,10 @@
-using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 using VibeMoment.BusinessLogic.Interfaces.Repositories;
 using VibeMoment.BusinessLogic.Interfaces.Services;
 using VibeMoment.BusinessLogic.Services;
 using VibeMoment.Infrastructure.Database.Repositories;
 
-namespace VibeMoment.Api.Configurations;
+namespace VibeMoment.Infrastructure.Configurations;
 
 public static class ServiceCollectionExtensions
 {
@@ -17,9 +17,5 @@ public static class ServiceCollectionExtensions
     {   
         services.AddScoped<IAuthRepository, AuthRepository>();
         services.AddScoped<IPhotoRepository, PhotoRepository>();
-    }
-    public static void AddAutomapper(this IServiceCollection services)
-    {
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
     }
 }

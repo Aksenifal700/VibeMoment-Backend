@@ -1,6 +1,6 @@
-using VibeMoment.Api.Configurations;
+using System.Reflection;
 using VibeMoment.Api.Middlewares;
-using VibeMoment.Infrastructure.Configuration;
+using VibeMoment.Infrastructure.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,9 +12,9 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddServices();
 builder.Services.AddRepositories();
-builder.Services.AddDataBaseContext(builder.Configuration);
+builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddIdentityServices();
-builder.Services.AddAutomapper();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 

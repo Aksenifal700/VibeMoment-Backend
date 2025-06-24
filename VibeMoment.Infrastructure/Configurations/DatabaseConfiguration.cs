@@ -1,14 +1,13 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using VibeMoment.Infrastructure.Database;
 
-namespace VibeMoment.Infrastructure.Configuration;
+namespace VibeMoment.Infrastructure.Configurations;
 
-public static class ServiceCollectionExtensions
+public static class DatabaseConfiguration
 {
-    public static void AddDataBaseContext(this IServiceCollection services,
+    public static void AddDatabase(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddDbContext<AppDbContext>(options =>
@@ -22,11 +21,4 @@ public static class ServiceCollectionExtensions
             )
         );
     }
-    
-        public static void AddIdentityServices(this IServiceCollection services)
-        {
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders();
-        }
 }
