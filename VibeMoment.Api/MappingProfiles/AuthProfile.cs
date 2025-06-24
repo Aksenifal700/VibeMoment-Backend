@@ -1,6 +1,5 @@
 using AutoMapper;
-using VibeMoment.Api.Requests.Auth;
-using VibeMoment.Api.Responses;
+using VibeMoment.Api.Models.Requests.Auth;
 using VibeMoment.BusinessLogic.DTOs.Auth;
 
 namespace VibeMoment.Api.MappingProfiles;
@@ -11,5 +10,7 @@ public class AuthProfile : Profile
     {
         CreateMap<RegisterRequest, RegisterDto>();
         CreateMap<SignInRequest, SigninDto>();
+
     }
+    
 }

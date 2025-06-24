@@ -16,6 +16,9 @@
         <ProjectReference Include="..\VibeMoment.BusinessLogic\VibeMoment.BusinessLogic.csproj" />
         <ProjectReference Include="..\VibeMoment.Infrastructure\VibeMoment.Infrastructure.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Models\" />
+    </ItemGroup>
 </Project>
 
         

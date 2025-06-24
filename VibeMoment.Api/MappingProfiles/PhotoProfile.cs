@@ -1,6 +1,6 @@
 using AutoMapper;
-using VibeMoment.Api.Requests.Photo;
-using VibeMoment.Api.Responses;
+using VibeMoment.Api.Models.Requests.Photo;
+using VibeMoment.Api.Models.Responses;
 using VibeMoment.BusinessLogic.DTOs.Photo;
 using VibeMoment.Infrastructure.Database.Entities;
 
@@ -19,8 +19,6 @@ public class PhotoProfile : Profile
         CreateMap<UploadPhotoDto, Photo>();
         CreateMap<Photo, PhotoDto>();
 
-        CreateMap<PhotoDto, PhotoResponse>()
-            .ForMember(dest => dest.ImageData, 
-            opt => opt.MapFrom(src => Convert.ToBase64String(src.Data)));
+        CreateMap<PhotoDto, PhotoResponse>();
     }
 }

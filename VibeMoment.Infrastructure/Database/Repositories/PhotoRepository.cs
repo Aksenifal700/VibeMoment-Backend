@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VibeMoment.BusinessLogic.DTOs.Photo;
+using VibeMoment.BusinessLogic.Exceptions;
 using VibeMoment.BusinessLogic.Interfaces.Repositories;
 using VibeMoment.Infrastructure.Database.Entities;
 
@@ -43,9 +44,9 @@ public class PhotoRepository : IPhotoRepository
     {
        var existingPhoto = await _context.Photos.FindAsync(dto.Id);
         if (existingPhoto is null) 
-            throw new NotImplementedException();
+            throw new NotFoundException("Photo not found");
 
-        _mapper.Map(dto, existingPhoto); //fixed problem with creating a new photo instead of updating photo
+        _mapper.Map(dto, existingPhoto); 
 
         await _context.SaveChangesAsync();
 

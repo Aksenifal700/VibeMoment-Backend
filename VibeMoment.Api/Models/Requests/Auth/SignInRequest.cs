@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace VibeMoment.Api.Requests.Auth;
+namespace VibeMoment.Api.Models.Requests.Auth;
 
 public class SignInRequest
 {
@@ -9,6 +9,9 @@ public class SignInRequest
     
     [Required]
     public string Password { get; set; }
-
+    
     public bool RememberMe { get; set; }
 }
+
+
+   

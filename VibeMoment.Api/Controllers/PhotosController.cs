@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using VibeMoment.Api.Responses;
-using VibeMoment.BusinessLogic.DTOs;
 using AutoMapper;
-using VibeMoment.Api.Requests.Photo;
+using VibeMoment.Api.Models.Requests.Photo;
+using VibeMoment.Api.Models.Responses;
 using VibeMoment.BusinessLogic.DTOs.Photo;
 using VibeMoment.BusinessLogic.Interfaces.Services;
 
@@ -26,11 +25,6 @@ public class PhotosController : ControllerBase
     public async Task<ActionResult> GetPhoto([FromRoute] int id)
     {
         var photo = await _photoService.GetPhotoAsync(id);
-
-        if (photo is null)
-        {
-            return NotFound(new { Success = false, Message = $"Photo with id {id} not found" });
-        }
         
         var response = _mapper.Map<PhotoResponse>(photo);
         return Ok(response);
@@ -44,13 +38,8 @@ public class PhotosController : ControllerBase
         {
             return BadRequest();
         }
-
-        using var stream = new MemoryStream();
-        await request.Photo.CopyToAsync(stream);
-
-        var uploadDto = _mapper.Map<UploadPhotoDto>(request);
-        uploadDto.Data = stream.ToArray();
-        uploadDto.FileName = request.Photo.FileName;
+        
+        var uploadDto = await PrepareUploadDto(request);
         
         var result = await _photoService.UploadPhotoAsync(uploadDto);
         
@@ -65,8 +54,7 @@ public class PhotosController : ControllerBase
 
     [HttpPut("{id:int}")]
     [Authorize]
-    public async Task<ActionResult<PhotoResponse>> UpdatePhoto([FromRoute] int id,
-        [FromBody] UpdatePhotoRequest request)
+    public async Task<ActionResult<PhotoResponse>> UpdatePhoto([FromRoute] int id, [FromBody] UpdatePhotoRequest request)
     {
         var updateDto = _mapper.Map<UpdatePhotoDto>(request);
         updateDto.Id = id;
@@ -84,5 +72,17 @@ public class PhotosController : ControllerBase
         await _photoService.DeletePhotoAsync(id);
         return Ok();
         
+    }
+
+    private async Task<UploadPhotoDto> PrepareUploadDto(UploadPhotoRequest request)
+    { 
+        using var stream = new MemoryStream();
+        await request.Photo.CopyToAsync(stream);
+
+        var uploadDto = _mapper.Map<UploadPhotoDto>(request);
+        uploadDto.Data = stream.ToArray();
+        uploadDto.FileName = request.Photo.FileName;
+        
+        return uploadDto;
     }
 }
