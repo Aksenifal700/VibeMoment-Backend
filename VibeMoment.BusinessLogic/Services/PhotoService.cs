@@ -16,9 +16,13 @@ public class PhotoService : IPhotoService
         _photoRepository = photoRepository;
     }
 
-    public async Task<PhotoDto?> GetPhotoAsync(int id)
+    public async Task<PhotoDto> GetPhotoAsync(int id)
     {
-        return await _photoRepository.GetByIdAsync(id);
+        var photo = await _photoRepository.GetByIdAsync(id);
+        if (photo is null)
+            throw new NotFoundException("Photo not found"); 
+        
+        return photo;
     }
 
     public async Task<PhotoDto> UploadPhotoAsync(UploadPhotoDto dto)
@@ -46,7 +50,8 @@ public class PhotoService : IPhotoService
     {
         var photo = await _photoRepository.GetByIdAsync(id);
         if (photo is null)
-            throw new NotFoundException("Photo not found");
-         await _photoRepository.DeletePhotoAsync(id);
+            throw new NotFoundException("Photo not found"); 
+        
+        await _photoRepository.DeletePhotoAsync(id);
     }
 }
