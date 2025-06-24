@@ -34,9 +34,9 @@ public class PhotosController : ControllerBase
     [Authorize]
     public async Task<ActionResult<PhotoResponse>> UploadPhoto([FromForm] UploadPhotoRequest request)
     {
-        if (request.Photo.Length is 0)
+        if (!ModelState.IsValid)
         {
-            return BadRequest();
+            return ValidationProblem(ModelState);
         }
         
         var uploadDto = await PrepareUploadDto(request);
@@ -50,12 +50,18 @@ public class PhotosController : ControllerBase
             new { id = response.Id }, 
             response
         );
+        
     }
 
     [HttpPut("{id:int}")]
     [Authorize]
     public async Task<ActionResult<PhotoResponse>> UpdatePhoto([FromRoute] int id, [FromBody] UpdatePhotoRequest request)
     {
+        if (!ModelState.IsValid)
+        {
+            return ValidationProblem(ModelState);
+        }
+        
         var updateDto = _mapper.Map<UpdatePhotoDto>(request);
         updateDto.Id = id;
 
