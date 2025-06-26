@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using VibeMoment.Api.Filters;
 using VibeMoment.Api.Models.Requests.Photo;
 using VibeMoment.Api.Models.Responses;
 using VibeMoment.BusinessLogic.DTOs.Photo;
@@ -30,15 +31,11 @@ public class PhotosController : ControllerBase
         return Ok(response);
     }
 
+    [ValidateModelState]
     [HttpPost]
     [Authorize]
     public async Task<ActionResult<PhotoResponse>> UploadPhoto([FromForm] UploadPhotoRequest request)
     {
-        if (!ModelState.IsValid)
-        {
-            return ValidationProblem(ModelState);
-        }
-        
         var uploadDto = await PrepareUploadDto(request);
         
         var result = await _photoService.UploadPhotoAsync(uploadDto);
@@ -53,15 +50,11 @@ public class PhotosController : ControllerBase
         
     }
 
+    [ValidateModelState]
     [HttpPut("{id:int}")]
     [Authorize]
     public async Task<ActionResult<PhotoResponse>> UpdatePhoto([FromRoute] int id, [FromBody] UpdatePhotoRequest request)
     {
-        if (!ModelState.IsValid)
-        {
-            return ValidationProblem(ModelState);
-        }
-        
         var updateDto = _mapper.Map<UpdatePhotoDto>(request);
         updateDto.Id = id;
 
