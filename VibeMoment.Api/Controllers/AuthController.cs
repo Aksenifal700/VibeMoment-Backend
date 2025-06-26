@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using VibeMoment.Api.Filters;
 using VibeMoment.Api.Models.Requests.Auth;
 using VibeMoment.BusinessLogic.DTOs.Auth;
 using VibeMoment.BusinessLogic.Interfaces.Services;
-
 
 namespace VibeMoment.Api.Controllers;
 
@@ -18,8 +18,10 @@ public class AuthController : ControllerBase
     {
         _authService = authService;
         _mapper = mapper;
+       
     }
-
+    
+    [ValidateModelState]
     [HttpPost("register")]
     public async Task<ActionResult> Register([FromBody] RegisterRequest request)
     {
@@ -29,9 +31,10 @@ public class AuthController : ControllerBase
 
         return isSuccess
             ? Ok()
-            : BadRequest();
+            : ValidationProblem(ModelState);
     }
-
+    
+    [ValidateModelState]
     [HttpPost("signin")]
     public async Task<ActionResult> SignIn([FromBody] SignInRequest request)
     {
@@ -41,7 +44,7 @@ public class AuthController : ControllerBase
 
         return isSuccess
             ? Ok()
-            : Unauthorized();
+            : ValidationProblem(ModelState);
     }
 
     [HttpPost("signout")]
