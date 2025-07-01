@@ -19,5 +19,8 @@
     <ItemGroup>
         <ProjectReference Include="..\VibeMoment.BusinessLogic\VibeMoment.BusinessLogic.csproj" />
     </ItemGroup>
+    <ItemGroup>
+      <Folder Include="Migrations\" />
+    </ItemGroup>
 
 </Project>
