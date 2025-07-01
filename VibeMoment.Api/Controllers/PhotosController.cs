@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
@@ -81,6 +82,7 @@ public class PhotosController : ControllerBase
         var uploadDto = _mapper.Map<UploadPhotoDto>(request);
         uploadDto.Data = stream.ToArray();
         uploadDto.FileName = request.Photo.FileName;
+        uploadDto.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         
         return uploadDto;
     }
