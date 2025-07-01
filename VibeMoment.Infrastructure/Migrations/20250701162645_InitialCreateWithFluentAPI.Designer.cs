@@ -12,8 +12,8 @@ using VibeMoment.Infrastructure.Database;
 namespace VibeMoment.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250630182942_AddUserPhotoRelationship")]
-    partial class AddUserPhotoRelationship
+    [Migration("20250701162645_InitialCreateWithFluentAPI")]
+    partial class InitialCreateWithFluentAPI
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -230,7 +230,9 @@ namespace VibeMoment.Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("AddedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<byte[]>("Data")
                         .IsRequired()
@@ -238,20 +240,29 @@ namespace VibeMoment.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("AddedAt")
+                        .HasDatabaseName("IX_Photos_AddedAt");
 
-                    b.ToTable("Photos");
+                    b.HasIndex("Title")
+                        .HasDatabaseName("IX_Photos_Title");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_Photos_UserId");
+
+                    b.ToTable("Photos", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -311,7 +322,8 @@ namespace VibeMoment.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("FK_Photos_AspNetUsers_UserId");
 
                     b.Navigation("User");
                 });
