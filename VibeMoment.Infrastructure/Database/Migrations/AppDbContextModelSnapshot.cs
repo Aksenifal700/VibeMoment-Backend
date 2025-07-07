@@ -253,9 +253,6 @@ namespace VibeMoment.Infrastructure.Migrations
                     b.HasIndex("AddedAt")
                         .HasDatabaseName("IX_Photos_AddedAt");
 
-                    b.HasIndex("Title")
-                        .HasDatabaseName("IX_Photos_Title");
-
                     b.HasIndex("UserId")
                         .HasDatabaseName("IX_Photos_UserId");
 

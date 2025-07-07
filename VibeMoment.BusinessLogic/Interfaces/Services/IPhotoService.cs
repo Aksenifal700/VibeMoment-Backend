@@ -8,4 +8,5 @@ public interface IPhotoService
     Task<PhotoDto> UploadPhotoAsync(UploadPhotoDto dto);
     Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto dto);
     Task DeletePhotoAsync(int id);
+    Task<List<PhotoDto>> GetPhotosByUserAsync(PhotosQuery query);
 }

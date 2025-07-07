@@ -69,4 +69,18 @@ public class PhotoRepository : IPhotoRepository
 
         return false;
     }
+
+    public async Task<List<PhotoDto>> GetByUserIdAsync(PhotosQuery query)
+    {
+        var photoQuery = _context.Photos
+            .Where(p => p.UserId == query.UserId);
+
+        photoQuery = query.OrderBy?.ToLower() == "asc"
+            ? photoQuery.OrderBy(p => p.AddedAt)
+            : photoQuery.OrderByDescending(p => p.AddedAt);
+
+        var result = await photoQuery.ToListAsync();
+        
+        return _mapper.Map<List<PhotoDto>>(result);
+    }
 }

@@ -2,7 +2,6 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using VibeMoment.Api.Filters;
 using VibeMoment.Api.Models.Requests.Photo;
 using VibeMoment.Api.Models.Responses;
 using VibeMoment.BusinessLogic.DTOs.Photo;
@@ -27,40 +26,39 @@ public class PhotosController : ControllerBase
     public async Task<ActionResult> GetPhoto([FromRoute] int id)
     {
         var photo = await _photoService.GetPhotoAsync(id);
-        
+
         var response = _mapper.Map<PhotoResponse>(photo);
         return Ok(response);
     }
 
-    [ValidateModelState]
     [HttpPost]
     [Authorize]
     public async Task<ActionResult<PhotoResponse>> UploadPhoto([FromForm] UploadPhotoRequest request)
     {
         var uploadDto = await PrepareUploadDto(request);
-        
+
         var result = await _photoService.UploadPhotoAsync(uploadDto);
-        
+
         var response = _mapper.Map<PhotoResponse>(result);
-        
+
         return CreatedAtAction(
-            nameof(GetPhoto), 
-            new { id = response.Id }, 
+            nameof(GetPhoto),
+            new { id = response.Id },
             response
         );
-        
+
     }
 
-    [ValidateModelState]
     [HttpPut("{id:int}")]
     [Authorize]
-    public async Task<ActionResult<PhotoResponse>> UpdatePhoto([FromRoute] int id, [FromBody] UpdatePhotoRequest request)
+    public async Task<ActionResult<PhotoResponse>> UpdatePhoto([FromRoute] int id,
+        [FromBody] UpdatePhotoRequest request)
     {
         var updateDto = _mapper.Map<UpdatePhotoDto>(request);
         updateDto.Id = id;
 
         var updatedPhoto = await _photoService.UpdatePhotoAsync(updateDto);
-        
+
         var photoResponse = _mapper.Map<PhotoResponse>(updatedPhoto);
         return Ok(photoResponse);
     }
@@ -71,7 +69,14 @@ public class PhotosController : ControllerBase
     {
         await _photoService.DeletePhotoAsync(id);
         return Ok();
-        
+
+    }
+
+    [HttpGet]
+    public async Task<ActionResult> GetPhotos([FromQuery] PhotosQuery query)
+    {
+        var photos = await _photoService.GetPhotosByUserAsync(query);
+        return Ok(photos);
     }
 
     private async Task<UploadPhotoDto> PrepareUploadDto(UploadPhotoRequest request)

@@ -54,4 +54,10 @@ public class PhotoService : IPhotoService
         
         await _photoRepository.DeletePhotoAsync(id);
     }
+
+    public async Task<List<PhotoDto>> GetPhotosByUserAsync(PhotosQuery query)
+    {
+      return await _photoRepository.GetByUserIdAsync(query);
+        
+    }
 }
