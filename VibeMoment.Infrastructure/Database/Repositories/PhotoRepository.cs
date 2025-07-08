@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VibeMoment.BusinessLogic.DTOs.Photo;
+using VibeMoment.BusinessLogic.Enums;
 using VibeMoment.BusinessLogic.Exceptions;
 using VibeMoment.BusinessLogic.Interfaces.Repositories;
 using VibeMoment.Infrastructure.Database.Entities;
@@ -29,7 +30,7 @@ public class PhotoRepository : IPhotoRepository
             : _mapper.Map<PhotoDto>(photo);
     }
 
-    public async Task<PhotoDto> SavePhotoAsync(UploadPhotoDto dto)
+    public async Task<PhotoDto> SaveAsync(UploadPhotoDto dto)
     {
         var photo = _mapper.Map<Photo>(dto);
         photo.AddedAt = DateTime.UtcNow;
@@ -40,7 +41,7 @@ public class PhotoRepository : IPhotoRepository
         return _mapper.Map<PhotoDto>(photo);
     }
 
-    public async Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto dto)
+    public async Task<PhotoDto> UpdateAsync(UpdatePhotoDto dto)
     {
        var existingPhoto = await _context.Photos.FindAsync(dto.Id);
         if (existingPhoto is null) 
@@ -55,7 +56,7 @@ public class PhotoRepository : IPhotoRepository
         return _mapper.Map<PhotoDto>(existingPhoto);
     }
 
-    public async Task<bool> DeletePhotoAsync(int id)
+    public async Task<bool> DeleteAsync(int id)
     {
         var deletedCount = await _context.Photos
             .Where(p => p.Id == id)
@@ -75,7 +76,7 @@ public class PhotoRepository : IPhotoRepository
         var photoQuery = _context.Photos
             .Where(p => p.UserId == query.UserId);
 
-        photoQuery = query.OrderBy?.ToLower() == "asc"
+        photoQuery = query.OrderBy == OrderDirection.Asc
             ? photoQuery.OrderBy(p => p.AddedAt)
             : photoQuery.OrderByDescending(p => p.AddedAt);
 
