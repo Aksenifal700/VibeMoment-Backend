@@ -2,6 +2,6 @@ namespace VibeMoment.BusinessLogic.Enums;
 
 public enum OrderDirection
 { 
-    Asc,
-    Desc
+    Asc = 1,
+    Desc = 2
 }

@@ -23,7 +23,7 @@ public class PhotosController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult> GetPhoto([FromRoute] int id)
+    public async Task<ActionResult<PhotoResponse>> GetPhoto([FromRoute] int id)
     {
         var photo = await _photoService.GetPhotoAsync(id);
 
@@ -73,7 +73,7 @@ public class PhotosController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<PhotoDto>> GetPhotos([FromQuery] PhotosQuery query)
+    public async Task<ActionResult<PhotoResponse>> GetPhotos([FromQuery] PhotosQuery query)
     {
         var photos = await _photoService.GetPhotosByUserIdAsync(query);
         return Ok(photos);
