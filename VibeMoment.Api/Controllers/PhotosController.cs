@@ -68,15 +68,17 @@ public class PhotosController : ControllerBase
     public async Task<ActionResult> DeletePhoto([FromRoute] int id)
     {
         await _photoService.DeletePhotoAsync(id);
-        return Ok();
+        return NoContent();
 
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<PhotoDto>>> GetPhotos([FromQuery] PhotosQuery query)
+    public async Task<ActionResult<List<PhotoResponse>>> GetPhotos([FromQuery] PhotosQuery query)
     {
         var photos = await _photoService.GetPhotosByUserIdAsync(query);
-        return Ok(photos);
+        
+        var response = _mapper.Map<List<PhotoResponse>>(photos);
+        return Ok(response);
     }
 
     private async Task<UploadPhotoDto> PrepareUploadDto(UploadPhotoRequest request)
