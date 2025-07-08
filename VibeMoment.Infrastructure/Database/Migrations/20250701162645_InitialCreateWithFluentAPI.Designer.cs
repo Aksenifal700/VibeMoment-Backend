@@ -5,22 +5,22 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using VibeMoment.Infrastructure.Database; 
+using VibeMoment.Infrastructure.Database;
 
 #nullable disable
 
 namespace VibeMoment.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250608125850_AddedAuthorization")]
-    partial class AddedAuthorization
+    [Migration("20250701162645_InitialCreateWithFluentAPI")]
+    partial class InitialCreateWithFluentAPI
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0")
+                .HasAnnotation("ProductVersion", "9.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -221,7 +221,7 @@ namespace VibeMoment.Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("VibeMoment.Database.Entities.Photo", b =>
+            modelBuilder.Entity("VibeMoment.Infrastructure.Database.Entities.Photo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -230,7 +230,9 @@ namespace VibeMoment.Infrastructure.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("AddedAt")
-                        .HasColumnType("timestamp with time zone");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
                     b.Property<byte[]>("Data")
                         .IsRequired()
@@ -238,14 +240,29 @@ namespace VibeMoment.Infrastructure.Migrations
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("character varying(450)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Photos");
+                    b.HasIndex("AddedAt")
+                        .HasDatabaseName("IX_Photos_AddedAt");
+
+                    b.HasIndex("Title")
+                        .HasDatabaseName("IX_Photos_Title");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("IX_Photos_UserId");
+
+                    b.ToTable("Photos", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -297,6 +314,18 @@ namespace VibeMoment.Infrastructure.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("VibeMoment.Infrastructure.Database.Entities.Photo", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Photos_AspNetUsers_UserId");
+
+                    b.Navigation("User");
                 });
 #pragma warning restore 612, 618
         }

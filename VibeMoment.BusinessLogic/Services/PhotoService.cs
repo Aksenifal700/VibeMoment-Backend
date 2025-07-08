@@ -27,7 +27,7 @@ public class PhotoService : IPhotoService
 
     public async Task<PhotoDto> UploadPhotoAsync(UploadPhotoDto dto)
     {
-        return await _photoRepository.SavePhotoAsync(dto);
+        return await _photoRepository.SaveAsync(dto);
     }
 
     public async Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto dto)
@@ -43,7 +43,7 @@ public class PhotoService : IPhotoService
         }
 
         dto.UpdatedAt = DateTime.UtcNow;
-        return await _photoRepository.UpdatePhotoAsync(dto);
+        return await _photoRepository.UpdateAsync(dto);
     }
 
     public async Task DeletePhotoAsync(int id)
@@ -52,6 +52,12 @@ public class PhotoService : IPhotoService
         if (photo is null)
             throw new NotFoundException("Photo not found"); 
         
-        await _photoRepository.DeletePhotoAsync(id);
+        await _photoRepository.DeleteAsync(id);
+    }
+
+    public async Task<List<PhotoDto>> GetPhotosByUserIdAsync(PhotosQuery query)
+    {
+      return await _photoRepository.GetByUserIdAsync(query);
+        
     }
 }

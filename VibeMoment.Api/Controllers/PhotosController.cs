@@ -1,7 +1,7 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using VibeMoment.Api.Filters;
 using VibeMoment.Api.Models.Requests.Photo;
 using VibeMoment.Api.Models.Responses;
 using VibeMoment.BusinessLogic.DTOs.Photo;
@@ -23,43 +23,42 @@ public class PhotosController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult> GetPhoto([FromRoute] int id)
+    public async Task<ActionResult<PhotoResponse>> GetPhoto([FromRoute] int id)
     {
         var photo = await _photoService.GetPhotoAsync(id);
-        
+
         var response = _mapper.Map<PhotoResponse>(photo);
         return Ok(response);
     }
 
-    [ValidateModelState]
     [HttpPost]
     [Authorize]
     public async Task<ActionResult<PhotoResponse>> UploadPhoto([FromForm] UploadPhotoRequest request)
     {
         var uploadDto = await PrepareUploadDto(request);
-        
+
         var result = await _photoService.UploadPhotoAsync(uploadDto);
-        
+
         var response = _mapper.Map<PhotoResponse>(result);
-        
+
         return CreatedAtAction(
-            nameof(GetPhoto), 
-            new { id = response.Id }, 
+            nameof(GetPhoto),
+            new { id = response.Id },
             response
         );
-        
+
     }
 
-    [ValidateModelState]
     [HttpPut("{id:int}")]
     [Authorize]
-    public async Task<ActionResult<PhotoResponse>> UpdatePhoto([FromRoute] int id, [FromBody] UpdatePhotoRequest request)
+    public async Task<ActionResult<PhotoResponse>> UpdatePhoto([FromRoute] int id,
+        [FromBody] UpdatePhotoRequest request)
     {
         var updateDto = _mapper.Map<UpdatePhotoDto>(request);
         updateDto.Id = id;
 
         var updatedPhoto = await _photoService.UpdatePhotoAsync(updateDto);
-        
+
         var photoResponse = _mapper.Map<PhotoResponse>(updatedPhoto);
         return Ok(photoResponse);
     }
@@ -69,8 +68,17 @@ public class PhotosController : ControllerBase
     public async Task<ActionResult> DeletePhoto([FromRoute] int id)
     {
         await _photoService.DeletePhotoAsync(id);
-        return Ok();
+        return NoContent();
+
+    }
+
+    [HttpGet]
+    public async Task<ActionResult<List<PhotoResponse>>> GetPhotos([FromQuery] PhotosQuery query)
+    {
+        var photos = await _photoService.GetPhotosByUserIdAsync(query);
         
+        var response = _mapper.Map<List<PhotoResponse>>(photos);
+        return Ok(response);
     }
 
     private async Task<UploadPhotoDto> PrepareUploadDto(UploadPhotoRequest request)
@@ -81,6 +89,7 @@ public class PhotosController : ControllerBase
         var uploadDto = _mapper.Map<UploadPhotoDto>(request);
         uploadDto.Data = stream.ToArray();
         uploadDto.FileName = request.Photo.FileName;
+        uploadDto.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         
         return uploadDto;
     }

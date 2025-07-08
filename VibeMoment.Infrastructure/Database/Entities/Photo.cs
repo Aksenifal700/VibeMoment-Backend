@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace VibeMoment.Infrastructure.Database.Entities;
 
 public class Photo
@@ -8,4 +10,8 @@ public class Photo
 
     public DateTime AddedAt { get; set; } 
     public DateTime? UpdatedAt { get; set; }
+    
+    public string UserId { get; set; }
+    public IdentityUser User { get; set; }
+    
 }
