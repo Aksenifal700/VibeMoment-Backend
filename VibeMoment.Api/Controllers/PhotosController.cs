@@ -73,7 +73,7 @@ public class PhotosController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<PhotoResponse>> GetPhotos([FromQuery] PhotosQuery query)
+    public async Task<ActionResult<List<PhotoDto>>> GetPhotos([FromQuery] PhotosQuery query)
     {
         var photos = await _photoService.GetPhotosByUserIdAsync(query);
         return Ok(photos);
