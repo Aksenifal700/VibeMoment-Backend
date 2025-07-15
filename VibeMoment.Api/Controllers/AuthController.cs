@@ -37,10 +37,10 @@ public class AuthController : ControllerBase
     {
         var loginDto = _mapper.Map<SigninDto>(request);
 
-        var isSuccess = await _authService.SignInAsync(loginDto);
+        var token = await _authService.SignInAsync(loginDto);
 
-        return isSuccess
-            ? Ok()
+        return token is not null 
+            ? Ok(token)
             : ValidationProblem(ModelState);
     }
 

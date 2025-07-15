@@ -47,7 +47,7 @@ public class PhotoConfiguration : IEntityTypeConfiguration<Photo>
             .WithMany()
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade)
-            .HasConstraintName("FK_Photos_AspNetUsers_UserId");
+            .HasConstraintName("FK_Photos_Users_UserId");
     }
 }
 

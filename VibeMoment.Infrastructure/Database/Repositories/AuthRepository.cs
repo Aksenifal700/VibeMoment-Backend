@@ -1,45 +1,45 @@
-using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using VibeMoment.BusinessLogic.Interfaces.Repositories;
+using VibeMoment.Infrastructure.Database.Entities;
 
 namespace VibeMoment.Infrastructure.Database.Repositories;
 
 public class AuthRepository : IAuthRepository
 {
-    private readonly UserManager<IdentityUser> _userManager;
-    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly AppDbContext _context;
 
-    public AuthRepository(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+    public AuthRepository(AppDbContext context)
     {
-        _userManager = userManager;
-        _signInManager = signInManager;
+        _context = context;
     }
 
     public async Task<bool> CreateUserAsync(string email, string password, string username)
     {
-        var user = new IdentityUser
+        var user = new User
         {
+            Id = Guid.NewGuid(),
+            Email = email,
             UserName = username,
-            Email = email
+            PasswordHash = password
         };
 
-        var result = await _userManager.CreateAsync(user, password);
-        return result.Succeeded;
+      _context.Users.Add(user); 
+      await _context.SaveChangesAsync();
+      return true;
     }
 
-    public async Task<bool> SignInAsync(string usernameOrEmail, string password)
+    public async Task<Guid?> GetValidUserIdAsync(string usernameOrEmail, string password)
     {
-        var user = usernameOrEmail.Contains("@")
-            ? await _userManager.FindByEmailAsync(usernameOrEmail)
-            : await _userManager.FindByNameAsync(usernameOrEmail);
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u =>
+                (u.Email == usernameOrEmail || u.UserName == usernameOrEmail) &&
+                u.PasswordHash == password);
 
-        if (user is null) return false;
-
-        var result = await _signInManager.PasswordSignInAsync(user.UserName, password, false, true);
-        return result.Succeeded;
+        return user?.Id;
     }
-
-    public async Task SignOutAsync()
+    
+    public Task SignOutAsync()
     {
-        await _signInManager.SignOutAsync();
+        return Task.CompletedTask;
     }
 }

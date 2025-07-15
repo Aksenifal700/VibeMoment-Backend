@@ -74,7 +74,7 @@ public class PhotoRepository : IPhotoRepository
     public async Task<List<PhotoDto>> GetByUserIdAsync(PhotosQuery query)
     {
         var photoQuery = _context.Photos
-            .Where(p => p.UserId == query.UserId);
+            .Where(p => p.UserId == Guid.Parse(query.UserId));
 
         photoQuery = query.OrderBy == OrderDirection.Asc
             ? photoQuery.OrderBy(p => p.AddedAt)

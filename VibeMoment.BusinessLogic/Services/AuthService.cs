@@ -7,10 +7,12 @@ namespace VibeMoment.BusinessLogic.Services;
 public class AuthService : IAuthService
 {
     private readonly IAuthRepository _authRepository;
+    private readonly IJwtTokenService _jwtTokenService;
 
-    public AuthService(IAuthRepository authRepository)
+    public AuthService(IAuthRepository authRepository, IJwtTokenService jwtTokenService)
     {
         _authRepository = authRepository;
+        _jwtTokenService = jwtTokenService;
     }
 
     public async Task<bool> RegisterAsync(RegisterDto dto)
@@ -21,11 +23,19 @@ public class AuthService : IAuthService
             dto.UserName);
     }
 
-    public async Task<bool> SignInAsync(SigninDto dto)
+    public async Task<string?> SignInAsync(SigninDto dto)
     {
-        return await _authRepository.SignInAsync(
-            dto.UsernameOrEmail,
-            dto.Password);
+        var userId = await  _authRepository.GetValidUserIdAsync(dto.UsernameOrEmail, dto.Password);
+        
+        if (userId is null)
+            return null;
+
+        var token = _jwtTokenService.GenerateToken(new TokenGenerationDto
+        {
+            Email = dto.UsernameOrEmail,
+            UserId = userId.Value
+        });
+        return token;
     }
 
     public async Task<bool> SignOutAsync()
