@@ -24,7 +24,7 @@ public static class JwtConfiguration
                 ValidIssuer = config["Jwt:Issuer"],
                 ValidAudience = config["Jwt:Audience"],
                 IssuerSigningKey = new SymmetricSecurityKey
-                    (Encoding.UTF8.GetBytes(config["Jwt:Key"]!)),
+                    (Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
                 ValidateIssuer = true,
                 ValidateAudience = true,
                 ValidateLifetime = true,

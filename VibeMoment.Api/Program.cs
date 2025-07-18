@@ -2,8 +2,6 @@ using System.Reflection;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using VibeMoment.Api.Middlewares;
-using VibeMoment.BusinessLogic.Interfaces.Services;
-using VibeMoment.Infrastructure.Auth;
 using VibeMoment.Infrastructure.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,7 +20,6 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 
-builder.Services.AddScoped<IJwtTokenService, JwtTokenGenerator>();
 
 var app = builder.Build();
 

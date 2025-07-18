@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Identity;
-
 namespace VibeMoment.Infrastructure.Database.Entities;
 
 public class Photo
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Title { get; set; }
     public byte[] Data { get; set; } = [];
 

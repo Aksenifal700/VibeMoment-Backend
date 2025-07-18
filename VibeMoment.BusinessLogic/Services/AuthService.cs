@@ -1,4 +1,5 @@
 using VibeMoment.BusinessLogic.DTOs.Auth;
+using VibeMoment.BusinessLogic.Exceptions;
 using VibeMoment.BusinessLogic.Interfaces.Repositories;
 using VibeMoment.BusinessLogic.Interfaces.Services;
 
@@ -7,40 +8,32 @@ namespace VibeMoment.BusinessLogic.Services;
 public class AuthService : IAuthService
 {
     private readonly IAuthRepository _authRepository;
-    private readonly IJwtTokenService _jwtTokenService;
+    private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
-    public AuthService(IAuthRepository authRepository, IJwtTokenService jwtTokenService)
+    public AuthService(IAuthRepository authRepository, IJwtTokenGenerator jwtTokenGenerator)
     {
         _authRepository = authRepository;
-        _jwtTokenService = jwtTokenService;
+        _jwtTokenGenerator = jwtTokenGenerator;
     }
 
     public async Task<bool> RegisterAsync(RegisterDto dto)
     {
-        return await _authRepository.CreateUserAsync(
-            dto.Email,
-            dto.Password,
-            dto.UserName);
+        var isCreated = await _authRepository.CreateUserAsync(dto);
+        
+        return isCreated;
     }
 
-    public async Task<string?> SignInAsync(SigninDto dto)
+    public async Task<TokenResultDto> SignInAsync(SigninDto dto)
     {
         var userId = await  _authRepository.GetValidUserIdAsync(dto.UsernameOrEmail, dto.Password);
         
         if (userId is null)
-            return null;
+            throw new UserNotFoundException("Username or email address not found/or invalid password");
 
-        var token = _jwtTokenService.GenerateToken(new TokenGenerationDto
+        return _jwtTokenGenerator.GenerateToken(new TokenGenerationDto
         {
             Email = dto.UsernameOrEmail,
             UserId = userId.Value
         });
-        return token;
-    }
-
-    public async Task<bool> SignOutAsync()
-    {
-        await _authRepository.SignOutAsync();
-        return true;
     }
 }

@@ -23,8 +23,8 @@ public class PhotosController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<PhotoResponse>> GetPhoto([FromRoute] int id)
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<PhotoResponse>> GetPhoto([FromRoute] Guid id)
     {
         var photo = await _photoService.GetPhotoAsync(id);
 
@@ -51,8 +51,8 @@ public class PhotosController : ControllerBase
     }
     
     [Authorize]
-    [HttpPut("{id:int}")]
-    public async Task<ActionResult<PhotoResponse>> UpdatePhoto([FromRoute] int id,
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<PhotoResponse>> UpdatePhoto([FromRoute] Guid id,
         [FromBody] UpdatePhotoRequest request)
     {
         var updateDto = _mapper.Map<UpdatePhotoDto>(request);
@@ -65,20 +65,19 @@ public class PhotosController : ControllerBase
     }
     
     [Authorize]
-    [HttpDelete("{id:int}")]
-    public async Task<ActionResult> DeletePhoto([FromRoute] int id)
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> DeletePhoto([FromRoute] Guid id)
     {
         await _photoService.DeletePhotoAsync(id);
         return NoContent();
-
     }
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<List<PhotoResponse>>> GetPhotos([FromQuery] PhotosQuery query)
+    public async Task<ActionResult<List<PhotoResponse>>> GetPhotos([FromQuery] PhotosQueryRequest request)
     {
-        var photos = await _photoService.GetPhotosByUserIdAsync(query);
-        
+        var queryDto = _mapper.Map<PhotosQueryDto>(request);
+        var photos = await _photoService.GetPhotosByUserIdAsync(queryDto);
         var response = _mapper.Map<List<PhotoResponse>>(photos);
         return Ok(response);
     }

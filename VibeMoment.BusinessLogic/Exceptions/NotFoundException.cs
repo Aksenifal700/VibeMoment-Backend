@@ -7,3 +7,11 @@ public class NotFoundException : Exception
     
     public NotFoundException(string message) : base(message) { }
 }
+
+public class UserNotFoundException : Exception
+{
+    public HttpStatusCode StatusCode => HttpStatusCode.NotFound;
+    
+    public UserNotFoundException(string message) : base(message) { }
+}
+

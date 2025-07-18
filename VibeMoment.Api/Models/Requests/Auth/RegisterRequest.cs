@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations;
 
 namespace VibeMoment.Api.Models.Requests.Auth;
 

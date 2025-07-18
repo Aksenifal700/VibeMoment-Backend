@@ -22,7 +22,7 @@ public class PhotoRepository : IPhotoRepository
         _logger = logger;
     }
 
-    public async Task<PhotoDto?> GetByIdAsync(int id)
+    public async Task<PhotoDto?> GetByIdAsync(Guid id)
     {
         var photo = await _context.Photos.FindAsync(id);
         return photo is null
@@ -56,7 +56,7 @@ public class PhotoRepository : IPhotoRepository
         return _mapper.Map<PhotoDto>(existingPhoto);
     }
 
-    public async Task<bool> DeleteAsync(int id)
+    public async Task<bool> DeleteAsync(Guid id)
     {
         var deletedCount = await _context.Photos
             .Where(p => p.Id == id)
@@ -71,12 +71,12 @@ public class PhotoRepository : IPhotoRepository
         return false;
     }
 
-    public async Task<List<PhotoDto>> GetByUserIdAsync(PhotosQuery query)
+    public async Task<List<PhotoDto>> GetByUserIdAsync(PhotosQueryDto queryDto)
     {
         var photoQuery = _context.Photos
-            .Where(p => p.UserId == Guid.Parse(query.UserId));
+            .Where(p => p.UserId == queryDto.UserId);
 
-        photoQuery = query.OrderBy == OrderDirection.Asc
+        photoQuery = queryDto.OrderBy == OrderDirection.Asc
             ? photoQuery.OrderBy(p => p.AddedAt)
             : photoQuery.OrderByDescending(p => p.AddedAt);
 

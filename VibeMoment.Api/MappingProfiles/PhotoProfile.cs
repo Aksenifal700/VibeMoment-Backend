@@ -20,5 +20,7 @@ public class PhotoProfile : Profile
         CreateMap<Photo, PhotoDto>();
 
         CreateMap<PhotoDto, PhotoResponse>();
+        
+        CreateMap<PhotosQueryRequest, PhotosQueryDto>();
     }
 }

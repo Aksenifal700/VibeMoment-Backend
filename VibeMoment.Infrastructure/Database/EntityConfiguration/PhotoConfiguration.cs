@@ -11,8 +11,7 @@ public class PhotoConfiguration : IEntityTypeConfiguration<Photo>
         entity.HasKey(p => p.Id);
 
         entity.Property(p => p.Id)
-            .ValueGeneratedOnAdd()
-            .UseIdentityColumn();
+            .HasDefaultValueSql("gen_random_uuid()");
 
         entity.Property(p => p.Title)
             .IsRequired()

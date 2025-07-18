@@ -3,25 +3,26 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using VibeMoment.BusinessLogic;
 using VibeMoment.BusinessLogic.DTOs.Auth;
 using VibeMoment.BusinessLogic.Interfaces.Services;
 
 namespace VibeMoment.Infrastructure.Auth;
 
-public class JwtTokenGenerator : IJwtTokenService
+public class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly IConfiguration _configuration;
-    private static readonly TimeSpan TokenLifetime = TimeSpan.FromMinutes(5);
+    private static readonly TimeSpan TokenLifetime = TimeSpan.FromDays(3);
 
     public JwtTokenGenerator(IConfiguration configuration)
     {
         _configuration = configuration;
     }
     
-    public string GenerateToken(TokenGenerationDto dto)
+    public TokenResultDto GenerateToken(TokenGenerationDto dto)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!);
+        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]!);
         
         var claims = new List<Claim>
         {
@@ -42,6 +43,10 @@ public class JwtTokenGenerator : IJwtTokenService
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
-        return tokenHandler.WriteToken(token);
+        
+        return new TokenResultDto
+        {
+            Token = tokenHandler.WriteToken(token),
+        };
     }
 }
