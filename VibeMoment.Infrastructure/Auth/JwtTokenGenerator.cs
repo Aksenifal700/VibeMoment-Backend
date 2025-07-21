@@ -3,9 +3,8 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using VibeMoment.BusinessLogic;
 using VibeMoment.BusinessLogic.DTOs.Auth;
-using VibeMoment.BusinessLogic.Interfaces.Services;
+using VibeMoment.BusinessLogic.Interfaces;
 
 namespace VibeMoment.Infrastructure.Auth;
 
@@ -19,7 +18,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _configuration = configuration;
     }
     
-    public TokenResultDto GenerateToken(TokenGenerationDto dto)
+    public string? GenerateToken(TokenGenerationDto dto)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Secret"]!);
@@ -44,9 +43,6 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
         
-        return new TokenResultDto
-        {
-            Token = tokenHandler.WriteToken(token),
-        };
+        return tokenHandler.WriteToken(token);
     }
 }

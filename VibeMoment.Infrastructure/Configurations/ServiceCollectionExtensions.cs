@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using VibeMoment.BusinessLogic;
+using VibeMoment.BusinessLogic.Interfaces;
 using VibeMoment.BusinessLogic.Interfaces.Repositories;
 using VibeMoment.BusinessLogic.Interfaces.Services;
 using VibeMoment.BusinessLogic.Security;

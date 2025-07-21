@@ -14,9 +14,6 @@ public class AuthProfile : Profile
         CreateMap<RegisterDto, User>();
         
         CreateMap<SignInRequest, SigninDto>();
-        
-        CreateMap<TokenResultDto, SignInResponse>();
-
     }
     
 }

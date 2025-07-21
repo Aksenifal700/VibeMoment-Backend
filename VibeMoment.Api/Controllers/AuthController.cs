@@ -34,9 +34,10 @@ public class AuthController : ControllerBase
     [HttpPost("signin")]
     public async Task<ActionResult> SignIn([FromBody] SignInRequest request)
     {
-        var loginDto = _mapper.Map<SigninDto>(request);
-        var result = await _authService.SignInAsync(loginDto);
-        var response = _mapper.Map<SignInResponse>(result);
+        var signinDto = _mapper.Map<SigninDto>(request);
+        var token = await _authService.SignInAsync(signinDto);
+
+        var response = new SignInResponse { Token = token };
         
         return Ok(response);
     }
