@@ -7,7 +7,7 @@ public class UserNotFoundException : Exception
     public HttpStatusCode StatusCode => HttpStatusCode.NotFound;
 
     public UserNotFoundException()
-        : base("Invalid username or password.")
+        : base("User not found")
     {
     }
 }
