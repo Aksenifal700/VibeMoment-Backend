@@ -5,6 +5,9 @@ namespace VibeMoment.BusinessLogic.Exceptions;
 public class UserNotFoundException : Exception
 {
     public HttpStatusCode StatusCode => HttpStatusCode.NotFound;
-    
-    public UserNotFoundException(string message) : base(message) { }
+
+    public UserNotFoundException()
+        : base("Invalid username or password.")
+    {
+    }
 }

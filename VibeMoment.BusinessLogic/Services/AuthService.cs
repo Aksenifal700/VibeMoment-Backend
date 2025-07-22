@@ -29,7 +29,7 @@ public class AuthService : IAuthService
         var userId = await  _authRepository.GetValidUserIdAsync(dto.UsernameOrEmail, dto.Password);
         
         if (userId is null)
-            throw new UserNotFoundException("");
+            throw new UserNotFoundException();
 
         var token = _jwtTokenGenerator.GenerateToken(new TokenGenerationDto
         {

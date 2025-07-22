@@ -32,7 +32,7 @@ public class AuthController : ControllerBase
     }
     
     [HttpPost("signin")]
-    public async Task<ActionResult> SignIn([FromBody] SignInRequest request)
+    public async Task<ActionResult<SignInResponse>> SignIn([FromBody] SignInRequest request)
     {
         var signinDto = _mapper.Map<SigninDto>(request);
         var token = await _authService.SignInAsync(signinDto);
