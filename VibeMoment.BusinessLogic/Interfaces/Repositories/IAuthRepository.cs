@@ -1,8 +1,9 @@
+using VibeMoment.BusinessLogic.DTOs.Auth;
+
 namespace VibeMoment.BusinessLogic.Interfaces.Repositories;
 
 public interface IAuthRepository
 {
-    Task<bool> CreateUserAsync(string email, string password, string userName);
-    Task<bool> SignInAsync(string usernameOrEmail, string password);
-    Task SignOutAsync();
+    Task<bool> CreateUserAsync(RegisterDto dto);
+    Task<Guid?> GetValidUserIdAsync(string usernameOrEmail, string password);
 }

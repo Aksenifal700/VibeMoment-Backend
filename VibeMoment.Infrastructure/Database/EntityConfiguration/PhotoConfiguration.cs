@@ -11,8 +11,7 @@ public class PhotoConfiguration : IEntityTypeConfiguration<Photo>
         entity.HasKey(p => p.Id);
 
         entity.Property(p => p.Id)
-            .ValueGeneratedOnAdd()
-            .UseIdentityColumn();
+            .HasDefaultValueSql("gen_random_uuid()");
 
         entity.Property(p => p.Title)
             .IsRequired()
@@ -47,7 +46,7 @@ public class PhotoConfiguration : IEntityTypeConfiguration<Photo>
             .WithMany()
             .HasForeignKey(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade)
-            .HasConstraintName("FK_Photos_AspNetUsers_UserId");
+            .HasConstraintName("FK_Photos_Users_UserId");
     }
 }
 

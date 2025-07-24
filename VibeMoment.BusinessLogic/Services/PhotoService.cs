@@ -16,7 +16,7 @@ public class PhotoService : IPhotoService
         _photoRepository = photoRepository;
     }
 
-    public async Task<PhotoDto> GetPhotoAsync(int id)
+    public async Task<PhotoDto> GetPhotoAsync(Guid id)
     {
         var photo = await _photoRepository.GetByIdAsync(id);
         if (photo is null)
@@ -46,7 +46,7 @@ public class PhotoService : IPhotoService
         return await _photoRepository.UpdateAsync(dto);
     }
 
-    public async Task DeletePhotoAsync(int id)
+    public async Task DeletePhotoAsync(Guid id)
     {
         var photo = await _photoRepository.GetByIdAsync(id);
         if (photo is null)
@@ -55,9 +55,8 @@ public class PhotoService : IPhotoService
         await _photoRepository.DeleteAsync(id);
     }
 
-    public async Task<List<PhotoDto>> GetPhotosByUserIdAsync(PhotosQuery query)
+    public async Task<List<PhotoDto>> GetPhotosByUserIdAsync(PhotosQueryDto queryDto)
     {
-      return await _photoRepository.GetByUserIdAsync(query);
-        
+      return await _photoRepository.GetByUserIdAsync(queryDto);
     }
 }

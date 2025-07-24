@@ -4,9 +4,9 @@ namespace VibeMoment.BusinessLogic.Interfaces.Services;
 
 public interface IPhotoService
 {
-    Task<PhotoDto> GetPhotoAsync(int id);
+    Task<PhotoDto> GetPhotoAsync(Guid id);
     Task<PhotoDto> UploadPhotoAsync(UploadPhotoDto dto);
     Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto dto);
-    Task DeletePhotoAsync(int id);
-    Task<List<PhotoDto>> GetPhotosByUserIdAsync(PhotosQuery query);
+    Task DeletePhotoAsync(Guid id);
+    Task<List<PhotoDto>> GetPhotosByUserIdAsync(PhotosQueryDto queryDto);
 }

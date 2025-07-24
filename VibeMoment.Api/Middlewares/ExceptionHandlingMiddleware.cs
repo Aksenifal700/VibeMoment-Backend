@@ -33,7 +33,8 @@ public class ExceptionHandlingMiddleware
         var response = exception switch
         {
             NotFoundException notFoundEx => new ExceptionResponse(notFoundEx.StatusCode, notFoundEx.Message),
-            BusinessLogicException businessEx => new ExceptionResponse(businessEx.StatusCode, businessEx.Message)
+            BusinessLogicException businessEx => new ExceptionResponse(businessEx.StatusCode, businessEx.Message),
+            UserNotFoundException notFoundEx => new ExceptionResponse(notFoundEx.StatusCode, notFoundEx.Message)
         };
 
         context.Response.ContentType = "application/json";

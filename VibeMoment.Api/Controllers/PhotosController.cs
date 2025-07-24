@@ -22,17 +22,18 @@ public class PhotosController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<PhotoResponse>> GetPhoto([FromRoute] int id)
+    [AllowAnonymous]
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<PhotoResponse>> GetPhoto([FromRoute] Guid id)
     {
         var photo = await _photoService.GetPhotoAsync(id);
 
         var response = _mapper.Map<PhotoResponse>(photo);
         return Ok(response);
     }
-
-    [HttpPost]
+    
     [Authorize]
+    [HttpPost]
     public async Task<ActionResult<PhotoResponse>> UploadPhoto([FromForm] UploadPhotoRequest request)
     {
         var uploadDto = await PrepareUploadDto(request);
@@ -48,10 +49,10 @@ public class PhotosController : ControllerBase
         );
 
     }
-
-    [HttpPut("{id:int}")]
+    
     [Authorize]
-    public async Task<ActionResult<PhotoResponse>> UpdatePhoto([FromRoute] int id,
+    [HttpPut("{id:guid}")]
+    public async Task<ActionResult<PhotoResponse>> UpdatePhoto([FromRoute] Guid id,
         [FromBody] UpdatePhotoRequest request)
     {
         var updateDto = _mapper.Map<UpdatePhotoDto>(request);
@@ -62,21 +63,21 @@ public class PhotosController : ControllerBase
         var photoResponse = _mapper.Map<PhotoResponse>(updatedPhoto);
         return Ok(photoResponse);
     }
-
-    [HttpDelete("{id:int}")]
+    
     [Authorize]
-    public async Task<ActionResult> DeletePhoto([FromRoute] int id)
+    [HttpDelete("{id:guid}")]
+    public async Task<ActionResult> DeletePhoto([FromRoute] Guid id)
     {
         await _photoService.DeletePhotoAsync(id);
         return NoContent();
-
     }
 
+    [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<List<PhotoResponse>>> GetPhotos([FromQuery] PhotosQuery query)
+    public async Task<ActionResult<List<PhotoResponse>>> GetPhotos([FromQuery] PhotosQueryRequest request)
     {
-        var photos = await _photoService.GetPhotosByUserIdAsync(query);
-        
+        var queryDto = _mapper.Map<PhotosQueryDto>(request);
+        var photos = await _photoService.GetPhotosByUserIdAsync(queryDto);
         var response = _mapper.Map<List<PhotoResponse>>(photos);
         return Ok(response);
     }
@@ -89,7 +90,7 @@ public class PhotosController : ControllerBase
         var uploadDto = _mapper.Map<UploadPhotoDto>(request);
         uploadDto.Data = stream.ToArray();
         uploadDto.FileName = request.Photo.FileName;
-        uploadDto.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        uploadDto.UserId = Guid.Parse(User.FindFirstValue("userid")!);
         
         return uploadDto;
     }

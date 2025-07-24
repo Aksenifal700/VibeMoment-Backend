@@ -5,7 +5,7 @@ public class UploadPhotoDto
     public string Title { get; set; }
     public byte[] Data { get; set; }
     public string? FileName { get; set; }
-    public string UserId { get; set; }
+    public Guid UserId { get; set; }
 }
 
 
