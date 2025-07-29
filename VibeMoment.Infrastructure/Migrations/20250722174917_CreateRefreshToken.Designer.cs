@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VibeMoment.Infrastructure.Database;
@@ -11,9 +12,11 @@ using VibeMoment.Infrastructure.Database;
 namespace VibeMoment.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250722174917_CreateRefreshToken")]
+    partial class CreateRefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,16 +68,10 @@ namespace VibeMoment.Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasDefaultValueSql("gen_random_uuid()");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("ExpiresOnUtc")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsRevoked")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
 
                     b.Property<string>("Token")
                         .IsRequired()
@@ -86,9 +83,12 @@ namespace VibeMoment.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Token")
+                        .IsUnique();
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("RefreshTokens", (string)null);
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("VibeMoment.Infrastructure.Database.Entities.User", b =>
@@ -145,8 +145,7 @@ namespace VibeMoment.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("FK_RefreshTokens_Users_UserId");
+                        .IsRequired();
 
                     b.Navigation("User");
                 });

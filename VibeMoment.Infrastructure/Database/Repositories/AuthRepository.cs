@@ -43,4 +43,12 @@ public class AuthRepository : IAuthRepository
 
         return user?.Id;
     }
+    
+    public async Task<string?> GetEmailAsync(Guid userId)
+    {
+        return await _context.Users
+            .Where(u => u.Id == userId)
+            .Select(u => u.Email)
+            .FirstOrDefaultAsync();
+    }
 }

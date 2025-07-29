@@ -11,7 +11,7 @@ namespace VibeMoment.Infrastructure.Auth;
 public class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly IConfiguration _configuration;
-    private static readonly TimeSpan TokenLifetime = TimeSpan.FromDays(3);
+    private static readonly TimeSpan TokenLifetime = TimeSpan.FromMinutes(5);
 
     public JwtTokenGenerator(IConfiguration configuration)
     {
