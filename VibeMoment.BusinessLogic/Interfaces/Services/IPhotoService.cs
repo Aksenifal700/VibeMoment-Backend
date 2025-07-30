@@ -6,7 +6,7 @@ public interface IPhotoService
 {
     Task<PhotoDto> GetPhotoAsync(Guid id);
     Task<PhotoDto> UploadPhotoAsync(UploadPhotoDto dto);
-    Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto dto);
+    Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto dto, Guid userId);
     Task DeletePhotoAsync(Guid id);
     Task<List<PhotoDto>> GetPhotosByUserIdAsync(PhotosQueryDto queryDto);
 }

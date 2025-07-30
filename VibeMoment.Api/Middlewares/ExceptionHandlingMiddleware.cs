@@ -34,7 +34,8 @@ public class ExceptionHandlingMiddleware
         {
             NotFoundException notFoundEx => new ExceptionResponse(notFoundEx.StatusCode, notFoundEx.Message),
             BusinessLogicException businessEx => new ExceptionResponse(businessEx.StatusCode, businessEx.Message),
-            UserNotFoundException notFoundEx => new ExceptionResponse(notFoundEx.StatusCode, notFoundEx.Message)
+            UserNotFoundException notFoundEx => new ExceptionResponse(notFoundEx.StatusCode, notFoundEx.Message),
+            ForbiddenAccessException accessEx => new ExceptionResponse(accessEx.StatusCode, accessEx.Message),
         };
 
         context.Response.ContentType = "application/json";

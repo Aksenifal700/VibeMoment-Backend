@@ -7,6 +7,8 @@ public class PhotoDto
     public byte[]? Data { get; set; }
     public DateTime AddedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    
+    public Guid UserId { get; set; }
 }
 
    
