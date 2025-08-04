@@ -7,12 +7,12 @@ using VibeMoment.Infrastructure.Database.Entities;
 
 namespace VibeMoment.Infrastructure.Database.Repositories;
 
-public class AuthRepository : IAuthRepository
+public class UserRepository : IAuthRepository
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
     private readonly IPasswordHasher _passwordHasher;
-    public AuthRepository(AppDbContext context, IMapper mapper, IPasswordHasher passwordHasher)
+    public UserRepository(AppDbContext context, IMapper mapper, IPasswordHasher passwordHasher)
     {
         _context = context;
         _mapper = mapper;
@@ -44,11 +44,14 @@ public class AuthRepository : IAuthRepository
         return user?.Id;
     }
     
-    public async Task<string?> GetEmailAsync(Guid userId)
+    public async Task<UserDto?> GetByIdAsync(Guid userId)
     {
-        return await _context.Users
-            .Where(u => u.Id == userId)
-            .Select(u => u.Email)
-            .FirstOrDefaultAsync();
+       var user = await _context.Users
+            .AsNoTracking()
+           .FirstOrDefaultAsync(u => u.Id == userId);
+       
+       return user is null 
+           ? null
+           : _mapper.Map<UserDto>(user.Id);
     }
 }

@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
     }
     public static void AddRepositories(this IServiceCollection services)
     {   
-        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IAuthRepository, UserRepository>();
         services.AddScoped<IPhotoRepository, PhotoRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
     }

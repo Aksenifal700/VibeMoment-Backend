@@ -48,7 +48,7 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost("refreshtoken")]
+    [HttpPost("token/refresh")]
     public async Task<ActionResult<RefreshTokenResponse>> RefreshToken([FromBody] RefreshTokenRequest request)
     {
         var result = await _authService.RefreshJwtAsync(request.RefreshToken);
@@ -60,7 +60,7 @@ public class AuthController : ControllerBase
         });
     }
     
-    [HttpPost("revoke")]
+    [HttpPost("token/revoke")]
     public async Task<IActionResult> RevokeToken([FromBody] RevokeTokenRequest request)
     {
         await _refreshTokenService.RevokeAsync(request.RefreshToken);

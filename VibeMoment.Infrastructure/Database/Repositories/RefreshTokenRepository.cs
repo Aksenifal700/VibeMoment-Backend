@@ -24,7 +24,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         
         refreshToken.Id = Guid.NewGuid();
         
-        _context.RefreshTokens.Add(refreshToken);
+        await _context.RefreshTokens.AddAsync(refreshToken);
         await _context.SaveChangesAsync();
         
         return _mapper.Map<RefreshTokenDto>(refreshToken);

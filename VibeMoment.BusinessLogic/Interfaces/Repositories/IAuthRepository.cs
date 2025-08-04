@@ -6,5 +6,5 @@ public interface IAuthRepository
 {
     Task<bool> CreateUserAsync(RegisterDto dto);
     Task<Guid?> GetValidUserIdAsync(string usernameOrEmail, string password);
-    Task<string?> GetEmailAsync(Guid userId);
+    Task<UserDto> GetByIdAsync(Guid userId);
 }

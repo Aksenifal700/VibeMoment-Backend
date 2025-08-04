@@ -24,6 +24,10 @@ public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
         entity.Property(r => r.IsRevoked)
             .IsRequired()
             .HasDefaultValue(false);
+        
+        entity.HasIndex(r => r.Token)
+            .HasDatabaseName("IX_RefreshTokens_Token")
+            .IsUnique();
 
         entity.HasOne(r => r.User)
             .WithMany()

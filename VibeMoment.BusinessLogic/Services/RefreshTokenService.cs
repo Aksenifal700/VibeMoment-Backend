@@ -42,17 +42,17 @@ public class RefreshTokenService : IRefreshTokenService
         var tokenDto = await _refreshTokenRepository.GetRefreshTokenAsync(refreshToken);
         
         if (tokenDto is null || tokenDto.ExpiresOnUtc < DateTime.UtcNow || tokenDto.IsRevoked)
-            throw new InvalidRefreshTokenException("Invalid refresh token");
+            throw InvalidRefreshTokenException.Invalid();
 
-        var email = await _authRepository.GetEmailAsync(tokenDto.UserId);
+        var userDto = await _authRepository.GetByIdAsync(tokenDto.UserId);
         
-        if (string.IsNullOrEmpty(email))
+        if (userDto is null)
             throw new UserNotFoundException();
 
         var jwt = _jwtTokenGenerator.GenerateToken(new TokenGenerationDto
         {
             UserId = tokenDto.UserId,
-            Email = email,
+            Email = userDto.Email,
         });
 
         return new SignInResultDto()
@@ -67,7 +67,7 @@ public class RefreshTokenService : IRefreshTokenService
         var tokenDto = await _refreshTokenRepository.GetRefreshTokenAsync(token);
         
         if (tokenDto is null || tokenDto.IsRevoked)
-            throw new InvalidRefreshTokenException("Token not found or already revoked");
+            throw InvalidRefreshTokenException.RevokedOrMissing();
         
         tokenDto.IsRevoked = true;
         await _refreshTokenRepository.RevokeAsync(token);

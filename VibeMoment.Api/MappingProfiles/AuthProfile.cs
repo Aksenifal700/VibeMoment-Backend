@@ -18,6 +18,8 @@ public class AuthProfile : Profile
         CreateMap<RefreshToken, RefreshTokenDto>();
         
         CreateMap<SignInRequest, SigninDto>();
+        
+        CreateMap<User, UserDto>();
     }
     
 }

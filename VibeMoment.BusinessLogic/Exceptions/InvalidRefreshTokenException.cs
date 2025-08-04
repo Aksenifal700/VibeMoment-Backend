@@ -5,5 +5,11 @@ namespace VibeMoment.BusinessLogic.Exceptions;
 public class InvalidRefreshTokenException : Exception
 {
     public HttpStatusCode StatusCode => HttpStatusCode.Unauthorized;
-    public InvalidRefreshTokenException(string message) : base(message) { }
+    private InvalidRefreshTokenException(string message) : base(message) { }
+    
+    public static InvalidRefreshTokenException Invalid() =>
+        new InvalidRefreshTokenException("Invalid refresh token.");
+
+    public static InvalidRefreshTokenException RevokedOrMissing() =>
+        new InvalidRefreshTokenException("Token not found or already revoked.");
 }
