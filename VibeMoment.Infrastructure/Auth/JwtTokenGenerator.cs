@@ -11,11 +11,12 @@ namespace VibeMoment.Infrastructure.Auth;
 public class JwtTokenGenerator : IJwtTokenGenerator
 {
     private readonly IConfiguration _configuration;
-    private static readonly TimeSpan TokenLifetime = TimeSpan.FromDays(3);
+    private readonly TimeSpan _tokenLifetime;
 
     public JwtTokenGenerator(IConfiguration configuration)
     {
         _configuration = configuration;
+        _tokenLifetime = _configuration.GetValue<TimeSpan>("Jwt:TokenLifetime");
     }
     
     public string? GenerateToken(TokenGenerationDto dto)
@@ -34,7 +35,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.Add(TokenLifetime),
+            Expires = DateTime.UtcNow.Add(_tokenLifetime),
             Issuer = "https://id.aksenifal.com",
             Audience = "https://VibeMoment.aksenifal.com",
             SigningCredentials =

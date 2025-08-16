@@ -6,8 +6,5 @@ public class UserNotFoundException : Exception
 {
     public HttpStatusCode StatusCode => HttpStatusCode.NotFound;
 
-    public UserNotFoundException()
-        : base("User not found")
-    {
-    }
+    public UserNotFoundException() : base("User not found") {}
 }
