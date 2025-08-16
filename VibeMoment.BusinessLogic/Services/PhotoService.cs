@@ -30,11 +30,14 @@ public class PhotoService : IPhotoService
         return await _photoRepository.SaveAsync(dto);
     }
 
-    public async Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto dto)
+    public async Task<PhotoDto> UpdatePhotoAsync(UpdatePhotoDto dto, Guid currentUserId)
     {
         var photo = await _photoRepository.GetByIdAsync(dto.Id);
         if (photo is null)
            throw new NotFoundException("Photo not found");
+        
+        if (photo.UserId != currentUserId)
+            throw new ForbiddenAccessException("You do not have permission to access this resource.");
 
 
         if ((DateTime.UtcNow - photo.AddedAt).TotalHours >= EDIT_LIMIT_HOURS)

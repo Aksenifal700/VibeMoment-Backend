@@ -57,8 +57,10 @@ public class PhotosController : ControllerBase
     {
         var updateDto = _mapper.Map<UpdatePhotoDto>(request);
         updateDto.Id = id;
+        
+        var currentUserId = Guid.Parse(User.FindFirst("userid")!.Value);
 
-        var updatedPhoto = await _photoService.UpdatePhotoAsync(updateDto);
+        var updatedPhoto = await _photoService.UpdatePhotoAsync(updateDto, currentUserId);
 
         var photoResponse = _mapper.Map<PhotoResponse>(updatedPhoto);
         return Ok(photoResponse);
