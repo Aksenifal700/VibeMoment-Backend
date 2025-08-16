@@ -23,5 +23,5 @@
     <ItemGroup>
         <ProjectReference Include="..\VibeMoment.BusinessLogic\VibeMoment.BusinessLogic.csproj" />
     </ItemGroup>
-
+    
 </Project>

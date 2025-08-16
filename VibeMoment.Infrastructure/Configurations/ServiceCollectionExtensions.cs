@@ -17,10 +17,12 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IPhotoService, PhotoService>();
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
     }
     public static void AddRepositories(this IServiceCollection services)
     {   
-        services.AddScoped<IAuthRepository, AuthRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPhotoRepository, PhotoRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
     }
 }

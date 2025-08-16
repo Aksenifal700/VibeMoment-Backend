@@ -2,9 +2,9 @@ using VibeMoment.BusinessLogic.DTOs.Auth;
 
 namespace VibeMoment.BusinessLogic.Interfaces.Services;
 
-public interface IAuthService
-{
-    Task<bool> RegisterAsync(RegisterDto dto);
-    Task<SignInResultDto> SignInAsync(SigninDto dto);
+public interface IRefreshTokenService
+{ 
+    Task<RefreshTokenDto> GenerateAndSaveAsync(Guid userId);
     Task<SignInResultDto> RefreshJwtAsync(string refreshToken);
+    Task RevokeAsync(string token);
 }
