@@ -11,15 +11,15 @@ public class RefreshTokenService : IRefreshTokenService
 {
     private readonly IRefreshTokenRepository _refreshTokenRepository;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
-    private readonly IAuthRepository _authRepository;
+    private readonly IUserRepository _userRepository;
     
     public RefreshTokenService(
         IRefreshTokenRepository refreshTokenRepository,
-        IJwtTokenGenerator jwtTokenGenerator, IAuthRepository authRepository)
+        IJwtTokenGenerator jwtTokenGenerator, IUserRepository userRepository)
     {
         _refreshTokenRepository = refreshTokenRepository;
         _jwtTokenGenerator = jwtTokenGenerator;
-        _authRepository = authRepository;
+        _userRepository = userRepository;
     }
 
     public async Task<RefreshTokenDto> GenerateAndSaveAsync(Guid userId)
@@ -44,7 +44,7 @@ public class RefreshTokenService : IRefreshTokenService
         if (tokenDto is null || tokenDto.ExpiresOnUtc < DateTime.UtcNow || tokenDto.IsRevoked)
             throw InvalidRefreshTokenException.Invalid();
 
-        var userDto = await _authRepository.GetByIdAsync(tokenDto.UserId);
+        var userDto = await _userRepository.GetByIdAsync(tokenDto.UserId);
         
         if (userDto is null)
             throw new UserNotFoundException();

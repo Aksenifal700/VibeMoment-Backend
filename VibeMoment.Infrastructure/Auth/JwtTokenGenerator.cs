@@ -16,7 +16,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
     public JwtTokenGenerator(IConfiguration configuration)
     {
         _configuration = configuration;
-        _tokenLifetime = _configuration["Enviornment"] == "Development" ? TimeSpan.FromDays(3) : TimeSpan.FromHours(1);
+        _tokenLifetime = _configuration.GetValue<TimeSpan>("Jwt:TokenLifetime");
     }
     
     public string? GenerateToken(TokenGenerationDto dto)

@@ -8,27 +8,27 @@ namespace VibeMoment.BusinessLogic.Services;
 
 public class AuthService : IAuthService
 {
-    private readonly IAuthRepository _authRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
     private readonly IRefreshTokenService _refreshTokenService;
 
-    public AuthService(IAuthRepository authRepository, IJwtTokenGenerator jwtTokenGenerator, IRefreshTokenService refreshTokenService)
+    public AuthService(IUserRepository userRepository, IJwtTokenGenerator jwtTokenGenerator, IRefreshTokenService refreshTokenService)
     {
-        _authRepository = authRepository;
+        _userRepository = userRepository;
         _jwtTokenGenerator = jwtTokenGenerator;
         _refreshTokenService = refreshTokenService;
     }
 
     public async Task<bool> RegisterAsync(RegisterDto dto)
     {
-        var isCreated = await _authRepository.CreateUserAsync(dto);
+        var isCreated = await _userRepository.CreateUserAsync(dto);
         
         return isCreated;
     }
 
     public async Task<SignInResultDto> SignInAsync(SigninDto dto)
     {
-        var userId = await  _authRepository.GetValidUserIdAsync(dto.UsernameOrEmail, dto.Password);
+        var userId = await  _userRepository.GetValidUserIdAsync(dto.UsernameOrEmail, dto.Password);
         
         if (userId is null)
             throw new UserNotFoundException();

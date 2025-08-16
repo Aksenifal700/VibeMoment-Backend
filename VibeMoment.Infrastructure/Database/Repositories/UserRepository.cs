@@ -7,7 +7,7 @@ using VibeMoment.Infrastructure.Database.Entities;
 
 namespace VibeMoment.Infrastructure.Database.Repositories;
 
-public class UserRepository : IAuthRepository
+public class UserRepository : IUserRepository
 {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;

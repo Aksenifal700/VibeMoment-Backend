@@ -1,7 +1,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using VibeMoment.BusinessLogic.DTOs.Auth;
-using VibeMoment.BusinessLogic.Interfaces;
 using VibeMoment.BusinessLogic.Interfaces.Repositories;
 using VibeMoment.Infrastructure.Database.Entities;
 
@@ -21,8 +20,6 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     public async Task<RefreshTokenDto> CreateAsync(CreateRefreshTokenDto dto)
     {
         var refreshToken = _mapper.Map<RefreshToken>(dto);
-        
-        refreshToken.Id = Guid.NewGuid();
         
         await _context.RefreshTokens.AddAsync(refreshToken);
         await _context.SaveChangesAsync();

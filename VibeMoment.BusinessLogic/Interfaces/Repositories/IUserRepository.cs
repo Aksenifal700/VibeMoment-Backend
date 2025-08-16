@@ -2,9 +2,9 @@ using VibeMoment.BusinessLogic.DTOs.Auth;
 
 namespace VibeMoment.BusinessLogic.Interfaces.Repositories;
 
-public interface IAuthRepository
+public interface IUserRepository
 {
     Task<bool> CreateUserAsync(RegisterDto dto);
     Task<Guid?> GetValidUserIdAsync(string usernameOrEmail, string password);
-    Task<UserDto> GetByIdAsync(Guid userId);
+    Task<UserDto?> GetByIdAsync(Guid userId);
 }
