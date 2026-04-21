@@ -26,8 +26,10 @@ public class UserRepository : IUserRepository
         var user = _mapper.Map<User>(dto);
         user.PasswordHash = passwordHash;
         user.PasswordSalt = passwordSalt;
+
+        user.Profile = new UserProfile();
         
-      _context.Users.Add(user); 
+      _context.Users.Add(user);
       await _context.SaveChangesAsync();
       return true;
     }

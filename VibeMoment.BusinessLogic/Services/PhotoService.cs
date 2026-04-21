@@ -15,7 +15,7 @@ public class PhotoService : IPhotoService
     {
         _photoRepository = photoRepository;
     }
-
+    
     public async Task<PhotoDto> GetPhotoAsync(Guid id)
     {
         var photo = await _photoRepository.GetByIdAsync(id);

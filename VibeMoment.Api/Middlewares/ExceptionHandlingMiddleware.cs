@@ -37,6 +37,7 @@ public class ExceptionHandlingMiddleware
             UserNotFoundException notFoundEx => new ExceptionResponse(notFoundEx.StatusCode, notFoundEx.Message),
             InvalidRefreshTokenException invalidRefreshTokenEx => new ExceptionResponse(invalidRefreshTokenEx.StatusCode, invalidRefreshTokenEx.Message),
             ForbiddenAccessException accessEx => new ExceptionResponse(accessEx.StatusCode, accessEx.Message),
+            _ => new ExceptionResponse(System.Net.HttpStatusCode.InternalServerError, "An unexpected error occurred.")
         };
 
         context.Response.ContentType = "application/json";
