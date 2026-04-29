@@ -18,11 +18,15 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+        services.AddScoped<ICommentService, CommentService>();
+        services.AddScoped<IUserProfileService, UserProfileService>();
     }
     public static void AddRepositories(this IServiceCollection services)
     {   
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPhotoRepository, PhotoRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<ICommentRepository, CommentRepository>();
+        services.AddScoped<IUserProfileRepository, UserProfileRepository>();
     }
 }
