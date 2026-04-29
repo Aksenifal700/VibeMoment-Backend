@@ -1,3 +1,4 @@
+using VibeMoment.BusinessLogic.DTOs.Common;
 using VibeMoment.BusinessLogic.DTOs.Photo;
 using VibeMoment.BusinessLogic.Exceptions;
 using VibeMoment.BusinessLogic.Interfaces.Repositories;
@@ -58,7 +59,7 @@ public class PhotoService : IPhotoService
         await _photoRepository.DeleteAsync(id);
     }
 
-    public async Task<List<PhotoDto>> GetPhotosByUserIdAsync(PhotosQueryDto queryDto)
+    public async Task<PageResult<PhotoDto>> GetPhotosByUserIdAsync(PhotosQueryDto queryDto)
     {
       return await _photoRepository.GetByUserIdAsync(queryDto);
     }
