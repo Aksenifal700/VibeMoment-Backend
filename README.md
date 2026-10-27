@@ -34,7 +34,7 @@ AutoMapper - Object-to-object mapping
 
 Swagger/OpenAPI - Interactive API documentation
 
-Reddis - caching
+Redis - caching
 
 # 📋 API Endpoints
 
@@ -57,6 +57,10 @@ PUT    /api/photos/{id}             # Update photo metadata
 DELETE /api/photos/{id}             # Delete photo
 
 GET    /api/photos/user/{userId}    # Get user's photos
+
+Comments
+
+GET /api/comment/{id}               # Get user comment
 
 # 🏃‍♂️ Getting Started
 
