@@ -58,10 +58,6 @@ DELETE /api/photos/{id}             # Delete photo
 
 GET    /api/photos/user/{userId}    # Get user's photos
 
-Comments
-
-GET /api/comment/{id}               # Get user comment
-
 # 🏃‍♂️ Getting Started
 
 Prerequisites
