@@ -52,6 +52,6 @@ public class UserRepository : IUserRepository
        
        return user is null 
            ? null
-           : _mapper.Map<UserDto>(user.Id);
+           : _mapper.Map<UserDto>(user);
     }
 }

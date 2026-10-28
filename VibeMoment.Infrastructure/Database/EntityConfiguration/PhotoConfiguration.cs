@@ -20,7 +20,11 @@ public class PhotoConfiguration : IEntityTypeConfiguration<Photo>
         entity.Property(p => p.Data)
             .IsRequired()
             .HasColumnType("bytea");
-
+        
+        entity.Property(p => p.Description)
+            .IsRequired(false)
+            .HasMaxLength(500);
+        
         entity.Property(p => p.AddedAt)
             .IsRequired()
             .HasColumnType("timestamp with time zone")

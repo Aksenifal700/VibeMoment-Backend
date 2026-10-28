@@ -22,6 +22,38 @@ namespace VibeMoment.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("VibeMoment.Infrastructure.Database.Entities.Comment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(1488)
+                        .HasColumnType("character varying(1488)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<Guid>("PhotoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PhotoId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comment", (string)null);
+                });
+
             modelBuilder.Entity("VibeMoment.Infrastructure.Database.Entities.Photo", b =>
                 {
                     b.Property<Guid>("Id")
@@ -37,6 +69,10 @@ namespace VibeMoment.Infrastructure.Migrations
                     b.Property<byte[]>("Data")
                         .IsRequired()
                         .HasColumnType("bytea");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -131,6 +167,71 @@ namespace VibeMoment.Infrastructure.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("VibeMoment.Infrastructure.Database.Entities.UserProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<byte[]>("Avatar")
+                        .HasColumnType("bytea");
+
+                    b.Property<string>("Bio")
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)");
+
+                    b.Property<DateTime?>("Birthdate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("City")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<string>("Country")
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserProfiles", (string)null);
+                });
+
+            modelBuilder.Entity("VibeMoment.Infrastructure.Database.Entities.Comment", b =>
+                {
+                    b.HasOne("VibeMoment.Infrastructure.Database.Entities.Photo", null)
+                        .WithMany("Comments")
+                        .HasForeignKey("PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VibeMoment.Infrastructure.Database.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VibeMoment.Infrastructure.Database.Entities.Photo", b =>
                 {
                     b.HasOne("VibeMoment.Infrastructure.Database.Entities.User", "User")
@@ -153,6 +254,28 @@ namespace VibeMoment.Infrastructure.Migrations
                         .HasConstraintName("FK_RefreshTokens_Users_UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VibeMoment.Infrastructure.Database.Entities.UserProfile", b =>
+                {
+                    b.HasOne("VibeMoment.Infrastructure.Database.Entities.User", "User")
+                        .WithOne("Profile")
+                        .HasForeignKey("VibeMoment.Infrastructure.Database.Entities.UserProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_UserProfile_Users");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VibeMoment.Infrastructure.Database.Entities.Photo", b =>
+                {
+                    b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("VibeMoment.Infrastructure.Database.Entities.User", b =>
+                {
+                    b.Navigation("Profile");
                 });
 #pragma warning restore 612, 618
         }
