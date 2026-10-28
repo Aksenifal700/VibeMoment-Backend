@@ -1,0 +1,85 @@
+name: Codex review gate
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  issues: read
+  pull-requests: read
+
+concurrency:
+  group: codex-review-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  codex-review-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+
+    steps:
+      - name: Wait for Codex review
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+            const expectedSha = pr.head.sha;
+            const deadline = Date.now() + 10 * 60 * 1000;
+
+            while (Date.now() < deadline) {
+              const comments = await github.paginate(
+                github.rest.issues.listComments,
+                {
+                  owner,
+                  repo,
+                  issue_number: pr.number,
+                  per_page: 100
+                }
+              );
+
+              const summary = comments
+                .filter(c =>
+                  c.user?.login === "chatgpt-codex-connector[bot]" &&
+                  c.performed_via_github_app?.id === 1144995 &&
+                  c.body?.includes(
+                    "<!-- codex-pull-request-review-summary -->"
+                  )
+                )
+                .sort((a, b) => b.id - a.id)[0];
+
+              const match = summary?.body?.match(
+                /<!-- codex-review-state:v1\s+([\s\S]*?)\s*-->/
+              );
+
+              if (match) {
+                const review = JSON.parse(match[1]).code_review;
+
+                if (review?.commit_sha === expectedSha) {
+                  core.info(`Codex status: ${review.status}`);
+
+                  if (review.status === "completed") {
+                    if (review.has_any_findings === false) {
+                      core.info("Codex completed with no findings.");
+                      return;
+                    }
+
+                    core.setFailed(
+                      "Codex found issues or returned an unknown result. " +
+                      "Fix the issues and request a new review."
+                    );
+                    return;
+                  }
+                }
+              }
+
+              core.info("Waiting for review of the current commit...");
+              await new Promise(resolve => setTimeout(resolve, 30000));
+            }
+
+            core.setFailed(
+              "No completed Codex review for the current commit " +
+              "within 10 minutes."
+            );
