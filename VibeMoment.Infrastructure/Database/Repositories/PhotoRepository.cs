@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using VibeMoment.BusinessLogic.DTOs.Common;
 using VibeMoment.BusinessLogic.DTOs.Photo;
 using VibeMoment.BusinessLogic.Enums;
 using VibeMoment.BusinessLogic.Exceptions;
@@ -71,17 +72,40 @@ public class PhotoRepository : IPhotoRepository
         return false;
     }
 
-    public async Task<List<PhotoDto>> GetByUserIdAsync(PhotosQueryDto queryDto)
+    public async Task<PageResult<PhotoDto>> GetByUserIdAsync(PhotosQueryDto queryDto)
     {
         var photoQuery = _context.Photos
             .Where(p => p.UserId == queryDto.UserId);
+        
+        if (!string.IsNullOrEmpty(queryDto.SearchTerm))
+        photoQuery = photoQuery.Where(p =>
+            EF.Functions.ILike(p.Title, $"%{queryDto.SearchTerm}%") ||
+            EF.Functions.ILike(p.Description, $"%{queryDto.SearchTerm}%"));         
+        
+        var totalCount = await photoQuery.CountAsync();
 
-        photoQuery = queryDto.OrderBy == OrderDirection.Asc
-            ? photoQuery.OrderBy(p => p.AddedAt)
-            : photoQuery.OrderByDescending(p => p.AddedAt);
+        photoQuery = queryDto.SortBy switch
+        {
+            PhotoSortBy.Title => queryDto.OrderBy == OrderDirection.Asc
+                ? photoQuery.OrderBy(p => p.Title)
+                : photoQuery.OrderByDescending(p => p.Title),
+
+            PhotoSortBy.AddedAt => queryDto.OrderBy == OrderDirection.Asc
+                ? photoQuery.OrderBy(p => p.AddedAt)
+                : photoQuery.OrderByDescending(p => p.AddedAt),
+
+            PhotoSortBy.UpdatedAt => queryDto.OrderBy == OrderDirection.Asc
+                ? photoQuery.OrderBy(p => p.UpdatedAt)
+                : photoQuery.OrderByDescending(p => p.UpdatedAt)
+        };
+        
+       photoQuery = photoQuery
+            .Skip((queryDto.PageNumber - 1) * queryDto.PageSize)
+            .Take(queryDto.PageSize);
 
         var result = await photoQuery.ToListAsync();
         
-        return _mapper.Map<List<PhotoDto>>(result);
+        var mappedPhotos = _mapper.Map<List<PhotoDto>>(result);
+        return new PageResult<PhotoDto>(mappedPhotos, totalCount, queryDto.PageNumber, queryDto.PageSize);
     }
 }

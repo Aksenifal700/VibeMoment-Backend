@@ -36,7 +36,7 @@ public class ExceptionHandlingMiddleware
             BusinessLogicException businessEx => new ExceptionResponse(businessEx.StatusCode, businessEx.Message),
             UserNotFoundException notFoundEx => new ExceptionResponse(notFoundEx.StatusCode, notFoundEx.Message),
             InvalidRefreshTokenException invalidRefreshTokenEx => new ExceptionResponse(invalidRefreshTokenEx.StatusCode, invalidRefreshTokenEx.Message),
-            ForbiddenAccessException accessEx => new ExceptionResponse(accessEx.StatusCode, accessEx.Message),
+            ForbiddenAccessException accessEx => new ExceptionResponse(accessEx.StatusCode, accessEx.Message),      
         };
 
         context.Response.ContentType = "application/json";
