@@ -84,7 +84,7 @@ public class PhotoRepository : IPhotoRepository
         
         var totalCount = await photoQuery.CountAsync();
 
-        photoQuery = queryDto.SortBy switch
+        var orderedQuery = queryDto.SortBy switch
         {
             PhotoSortBy.Title => queryDto.OrderBy == OrderDirection.Asc
                 ? photoQuery.OrderBy(p => p.Title)
@@ -99,7 +99,9 @@ public class PhotoRepository : IPhotoRepository
                 : photoQuery.OrderByDescending(p => p.UpdatedAt)
         };
         
-       photoQuery = photoQuery
+       photoQuery = orderedQuery
+            .ThenBy(p => p.AddedAt)
+            .ThenBy(p => p.Id)
             .Skip((queryDto.PageNumber - 1) * queryDto.PageSize)
             .Take(queryDto.PageSize);
 
