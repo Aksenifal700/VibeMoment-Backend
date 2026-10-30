@@ -15,11 +15,11 @@ public class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile>
             .HasDefaultValueSql("gen_random_uuid()");
 
         entity.Property(a => a.FirstName)
-            .IsRequired()
+            .IsRequired(false)
             .HasMaxLength(50);
         
         entity.Property(a => a.LastName)
-            .IsRequired()
+            .IsRequired(false)
             .HasMaxLength(50);
         
         entity.Property(a => a.Bio)
@@ -40,6 +40,7 @@ public class UserProfileConfiguration : IEntityTypeConfiguration<UserProfile>
         
         entity.Property(a => a.Gender)
             .IsRequired(false)
+            .HasConversion<string>()
             .HasMaxLength(25);
 
         entity.HasOne(a => a.User)

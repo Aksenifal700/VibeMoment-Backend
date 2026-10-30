@@ -181,8 +181,8 @@ namespace VibeMoment.Infrastructure.Migrations
                         .HasMaxLength(400)
                         .HasColumnType("character varying(400)");
 
-                    b.Property<DateTime?>("Birthdate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly?>("Birthdate")
+                        .HasColumnType("date");
 
                     b.Property<string>("City")
                         .HasMaxLength(40)
@@ -193,7 +193,6 @@ namespace VibeMoment.Infrastructure.Migrations
                         .HasColumnType("character varying(25)");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
@@ -202,7 +201,6 @@ namespace VibeMoment.Infrastructure.Migrations
                         .HasColumnType("character varying(25)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 

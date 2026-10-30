@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using VibeMoment.Api.Models.Requests.Photo;
 using VibeMoment.Api.Models.Responses;
+using VibeMoment.BusinessLogic.DTOs.Common;
 using VibeMoment.BusinessLogic.DTOs.Photo;
 using VibeMoment.BusinessLogic.Interfaces.Services;
 
@@ -76,12 +77,12 @@ public class PhotosController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<List<PhotoResponse>>> GetPhotos([FromQuery] PhotosQueryRequest request)
+    public async Task<ActionResult<PageResult<PhotoResponse>>> GetPhotos([FromQuery] PhotosQueryRequest request)
     {
         var queryDto = _mapper.Map<PhotosQueryDto>(request);
         var photos = await _photoService.GetPhotosByUserIdAsync(queryDto);
-        var response = _mapper.Map<List<PhotoResponse>>(photos);
-        return Ok(response);
+        var items = _mapper.Map<List<PhotoResponse>>(photos.Items);
+        return Ok(new PageResult<PhotoResponse>(items, photos.TotalCount, photos.PageNumber, photos.PageSize));
     }
 
     private async Task<UploadPhotoDto> PrepareUploadDto(UploadPhotoRequest request)
