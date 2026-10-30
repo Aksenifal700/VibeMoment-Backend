@@ -34,6 +34,8 @@ AutoMapper - Object-to-object mapping
 
 Swagger/OpenAPI - Interactive API documentation
 
+Redis - caching
+
 # 📋 API Endpoints
 
 Authentication
