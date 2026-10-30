@@ -181,8 +181,8 @@ namespace VibeMoment.Infrastructure.Migrations
                         .HasMaxLength(400)
                         .HasColumnType("character varying(400)");
 
-                    b.Property<DateTime?>("Birthdate")
-                        .HasColumnType("timestamp with time zone");
+                    b.Property<DateOnly?>("Birthdate")
+                        .HasColumnType("date");
 
                     b.Property<string>("City")
                         .HasMaxLength(40)
