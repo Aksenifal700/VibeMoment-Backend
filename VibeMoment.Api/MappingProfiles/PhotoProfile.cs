@@ -14,7 +14,7 @@ public class PhotoProfile : Profile
 
         CreateMap<UpdatePhotoRequest, UpdatePhotoDto>();
 
-        CreateMap<UpdatePhotoDto, Photo>();
+        CreateMap<UpdatePhotoDto, Photo>().ForMember(x => x.AddedAt, opt => opt.Ignore());
 
         CreateMap<UploadPhotoDto, Photo>();
         CreateMap<Photo, PhotoDto>();

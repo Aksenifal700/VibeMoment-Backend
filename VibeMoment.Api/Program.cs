@@ -22,7 +22,6 @@ builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly()); 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 var app = builder.Build();
 

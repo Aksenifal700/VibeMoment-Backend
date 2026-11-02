@@ -11,11 +11,13 @@ public class CommentServiceTest
 {
     private readonly Mock<ICommentRepository> _commentRepositoryMock;
     private readonly CommentService _commentService;
+    private readonly Mock<IPhotoRepository> _photoRepositoryMock;
 
     public CommentServiceTest()
     {
         _commentRepositoryMock = new Mock<ICommentRepository>();
-        _commentService = new CommentService(_commentRepositoryMock.Object);
+        _photoRepositoryMock = new Mock<IPhotoRepository>();
+        _commentService = new CommentService(_commentRepositoryMock.Object, _photoRepositoryMock.Object);
     }
 
     [Fact]
@@ -43,6 +45,10 @@ public class CommentServiceTest
             CreatedAt = DateTime.Now,
         };
         
+        _photoRepositoryMock
+            .Setup(repo => repo.GetByIdAsync(photoId))
+            .ReturnsAsync(new PhotoDto { Id = photoId, Title = "Test photo" });
+        
         _commentRepositoryMock
             .Setup(repo => repo.AddAsync(addCommentDto))
             .ReturnsAsync(createdComment);
@@ -64,35 +70,29 @@ public class CommentServiceTest
     }
 
     [Fact]
-    public async Task AddCommentAsync_ShouldThrowBusinessLogicException_WhenCommentWasNotCreated()
+    public async Task AddCommentAsync_ShouldThrowNotFoundException_WhenPhotoDoesNotExist()
     {
         //Arrange
-        var photoId = Guid.NewGuid();
-        var userId = Guid.NewGuid();
-        var content = "Text comment";
-
-        var addCommentDto = new AddCommentDto
+        var dto = new AddCommentDto
         {
-            PhotoId = photoId,
-            Content = content,
-            UserId = userId
+            PhotoId = Guid.NewGuid(),
+            UserId = Guid.NewGuid(),
+            Content = "Text comment"
         };
-        
-        _commentRepositoryMock
-            .Setup(repo => repo.AddAsync(addCommentDto))
-            .ReturnsAsync((CommentDto?)null);
-        
-        //Act
-        var act = async () => await _commentService.AddCommentAsync(addCommentDto);
-        
-        //Assert
-        await Assert.ThrowsAsync<BusinessLogicException>(act);
-        
-        _commentRepositoryMock.Verify(
-            repo => repo.AddAsync(addCommentDto),
-            Times.Once);
-    }
 
+        _photoRepositoryMock
+            .Setup(repo => repo.GetByIdAsync(dto.PhotoId))
+            .ReturnsAsync((PhotoDto?)null);
+
+        //Act
+        await Assert.ThrowsAsync<NotFoundException>(
+            () => _commentService.AddCommentAsync(dto));
+
+        //Assert
+        _commentRepositoryMock.Verify(
+            repo => repo.AddAsync(It.IsAny<AddCommentDto>()),
+            Times.Never);
+    }
     [Fact]
     public async Task DeleteCommentAsync_ShouldDeleteComent_WhenCommentExistsAndUserIsOwner()
     {
