@@ -6,6 +6,7 @@ public class Photo
     public string Title { get; set; }
     public byte[] Data { get; set; } = [];
     public string? Description { get; set; }
+    public string? BlobName { get; set; }
     
     public ICollection<Comment> Comments { get; set; } = [];
     

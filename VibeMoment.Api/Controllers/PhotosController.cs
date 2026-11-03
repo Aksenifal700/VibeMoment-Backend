@@ -37,10 +37,18 @@ public class PhotosController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PhotoResponse>> UploadPhoto([FromForm] UploadPhotoRequest request)
     {
-        var uploadDto = await PrepareUploadDto(request);
+        var uploadDto = _mapper.Map<UploadPhotoDto>(request);
+        uploadDto.FileName = request.Photo.FileName;
+        uploadDto.UserId = Guid.Parse(User.FindFirstValue("userid")!);
+        uploadDto.Data = [];
 
-        var result = await _photoService.UploadPhotoAsync(uploadDto);
+        using var stream = request.Photo.OpenReadStream();
 
+        var result = await _photoService.UploadPhotoAsync(
+            uploadDto,
+            stream,
+            request.Photo.ContentType);
+        
         var response = _mapper.Map<PhotoResponse>(result);
 
         return CreatedAtAction(
