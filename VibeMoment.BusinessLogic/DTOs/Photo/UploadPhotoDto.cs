@@ -4,6 +4,7 @@ public class UploadPhotoDto
 {
     public string Title { get; set; }
     public byte[] Data { get; set; }
+    public string? BlobName { get; set; }
     public string? FileName { get; set; }
     public Guid UserId { get; set; }
 }

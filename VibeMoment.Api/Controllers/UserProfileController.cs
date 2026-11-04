@@ -37,7 +37,7 @@ public class UserProfileController : ControllerBase
 
     [Authorize]
     [HttpPatch("avatar")]
-    public async Task<ActionResult<UserProfileDto?>> UpdateAvatar([FromForm] IFormFile avatar)
+    public async Task<ActionResult<UserProfileDto?>> UpdateAvatar(IFormFile avatar)
     {
         var currentuserId = Guid.Parse(User.FindFirst("userid")!.Value!);
         
