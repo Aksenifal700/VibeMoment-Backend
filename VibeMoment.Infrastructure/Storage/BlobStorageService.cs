@@ -53,4 +53,11 @@ public class BlobStorageService : IFileStorageService
             ContentType = response.Value.Details.ContentType
         };
     }
+
+    public async Task DeleteAsync(string blobName, CancellationToken cancellationToken = default)
+    {
+        BlobClient blobClient = _containerClient.GetBlobClient(blobName);
+        
+        await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
+    }
 }

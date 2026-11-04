@@ -11,4 +11,6 @@ public interface IFileStorageService
         CancellationToken cancellationToken = default);
     
     Task<FileContentDto> DownloadAsync(string blobName, CancellationToken cancellationToken = default);
+    
+    Task DeleteAsync(string blobName, CancellationToken cancellationToken = default);
 }

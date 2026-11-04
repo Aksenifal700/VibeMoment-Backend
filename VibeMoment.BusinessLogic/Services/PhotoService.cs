@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using VibeMoment.BusinessLogic.DTOs.Common;
 using VibeMoment.BusinessLogic.DTOs.Photo;
 using VibeMoment.BusinessLogic.Exceptions;
@@ -12,11 +13,13 @@ public class PhotoService : IPhotoService
 
     private readonly IPhotoRepository _photoRepository;
     private readonly IFileStorageService _fileStorageService;
+    private readonly ILogger<PhotoService> _logger;
 
-    public PhotoService(IPhotoRepository photoRepository, IFileStorageService fileStorageService)
+    public PhotoService(IPhotoRepository photoRepository, IFileStorageService fileStorageService, ILogger<PhotoService> logger)
     {
         _photoRepository = photoRepository;
         _fileStorageService = fileStorageService;
+        _logger = logger;
     }
     
     public async Task<PhotoDto> GetPhotoAsync(Guid id)
@@ -38,6 +41,25 @@ public class PhotoService : IPhotoService
             contentType);
         
         dto.Data = [];
+        
+        try
+        {
+            await _photoRepository.SaveAsync(dto);
+        }
+        catch 
+        {
+            try
+            {
+                await _fileStorageService.DeleteAsync(blobName);
+            }
+            catch(Exception cleanupException)
+            {
+                _logger.LogError(cleanupException, "Failed to clean up blob {BlobName} after saving photo failed",
+                    blobName);
+            }
+
+            throw;
+        }
         
         return await _photoRepository.SaveAsync(dto);
     }
@@ -112,11 +134,19 @@ public class PhotoService : IPhotoService
         return await _photoRepository.UpdateAsync(dto);
     }
 
-    public async Task DeletePhotoAsync(Guid id)
+    public async Task DeletePhotoAsync(Guid id, Guid currentUserId)
     {
         var photo = await _photoRepository.GetByIdAsync(id);
         if (photo is null)
             throw new NotFoundException("Photo not found"); 
+        
+        if(photo.UserId != currentUserId)
+            throw new ForbiddenAccessException("You do not have permission to access this resource.");
+        
+        if (!string.IsNullOrWhiteSpace(photo.BlobName))
+        { 
+            await _fileStorageService.DeleteAsync(photo.BlobName);
+        }
         
         await _photoRepository.DeleteAsync(id);
     }
