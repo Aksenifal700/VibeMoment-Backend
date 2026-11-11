@@ -18,6 +18,10 @@ public class PhotoServiceTests
 
     public PhotoServiceTests()
     {
+        _photoRepositoryMock = new Mock<IPhotoRepository>();
+        _fileStorageService = new Mock<IFileStorageService>();
+        _logger = new Mock<ILogger<PhotoService>>();
+        
         _photoService = new PhotoService(
             _photoRepositoryMock.Object,
             _fileStorageService.Object,
@@ -242,10 +246,12 @@ public class PhotoServiceTests
     {
         //Arrange
         var photoId = Guid.NewGuid();
+        var userId = Guid.NewGuid();
 
         var existingPhoto = new PhotoDto
         {
-            Id = photoId
+            Id = photoId,
+            UserId = userId
         };
 
         _photoRepositoryMock
@@ -253,7 +259,7 @@ public class PhotoServiceTests
             .ReturnsAsync(existingPhoto);
 
         //Act
-        await _photoService.DeletePhotoAsync(photoId);
+        await _photoService.DeletePhotoAsync(photoId, userId);
 
         //Assert
         _photoRepositoryMock.Verify(
