@@ -35,33 +35,31 @@ public class PhotoService : IPhotoService
     {
         string blobName = $"photos-{Guid.NewGuid()}";
         
-        dto.BlobName = await _fileStorageService.UploadAsync(
+        string savedBlobName = await _fileStorageService.UploadAsync(
             content,
             blobName,
             contentType);
         
-        dto.Data = [];
+        dto.BlobName = savedBlobName;
         
         try
         {
-            await _photoRepository.SaveAsync(dto);
+            return await _photoRepository.SaveAsync(dto);
         }
         catch 
         {
             try
             {
-                await _fileStorageService.DeleteAsync(blobName);
+                await _fileStorageService.DeleteAsync(savedBlobName);
             }
             catch(Exception cleanupException)
             {
                 _logger.LogError(cleanupException, "Failed to clean up blob {BlobName} after saving photo failed",
-                    blobName);
+                    savedBlobName);
             }
 
             throw;
         }
-        
-        return await _photoRepository.SaveAsync(dto);
     }
 
     public async Task<FileContentDto> GetPhotoContentAsync(Guid photoId)
