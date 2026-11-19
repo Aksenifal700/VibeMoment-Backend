@@ -1,0 +1,81 @@
+name: Claude review gate
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+  id-token: write
+
+concurrency:
+  group: claude-review-gate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  claude-review-gate:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Claude code review
+        id: claude
+        uses: anthropics/claude-code-action@v1
+        with:
+          # Token from `claude setup-token` (Pro/Max subscription),
+          # stored in Settings → Secrets and variables → Actions
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: |
+            REPO: ${{ github.repository }}
+            PR NUMBER: ${{ github.event.pull_request.number }}
+            BASE: origin/${{ github.event.pull_request.base.ref }}
+            HEAD SHA: ${{ github.event.pull_request.head.sha }}
+
+            You are the review gate for this ASP.NET Core (.NET 9) project
+            (Api / BusinessLogic / Infrastructure with EF Core migrations, Azure Blob Storage).
+
+            Review ONLY the changes in this PR: run `git diff BASE...HEAD` and read
+            surrounding code where needed. Look for:
+              - correctness bugs, null-reference risks, broken async/await, resource leaks
+              - security problems (secrets in code, injection, missing auth/validation)
+              - EF Core migration mistakes (data loss, snapshot mismatch)
+              - anything that would break the build or existing behaviour
+            Do NOT report style nits or subjective preferences as blocking.
+
+            Post ONE summary comment on the PR with
+            `gh pr comment <PR NUMBER> --body "..."` listing findings
+            (file:line, problem, suggested fix), or saying no blocking issues were found.
+
+            Then return the structured result: has_blocking_findings = true only if
+            there is at least one real bug or security problem that must be fixed before merge.
+          claude_args: |
+            --model claude-opus-5-5
+            --max-turns 30
+            --allowedTools "Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(gh pr comment:*),Bash(gh pr view:*),Bash(gh pr diff:*),Read,Glob,Grep"
+            --json-schema '{"type":"object","properties":{"has_blocking_findings":{"type":"boolean"},"summary":{"type":"string"}},"required":["has_blocking_findings","summary"]}'
+
+      - name: Enforce gate
+        env:
+          RESULT: ${{ steps.claude.outputs.structured_output }}
+        run: |
+          echo "Claude result: $RESULT"
+          if [ -z "$RESULT" ]; then
+            echo "::error::Claude did not return a result."
+            exit 1
+          fi
+          BLOCKING=$(echo "$RESULT" | jq -r '.has_blocking_findings')
+          if [ "$BLOCKING" != "false" ]; then
+            echo "::error::Claude found blocking issues. See the PR comment, fix them and push again."
+            exit 1
+          fi
+          echo "Claude review passed with no blocking findings."

@@ -5,6 +5,7 @@ public class PhotoDto
     public Guid Id { get; set; }
     public string Title { get; set; }
     public byte[]? Data { get; set; }
+    public string? BlobName { get; set; }
     public DateTime AddedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     

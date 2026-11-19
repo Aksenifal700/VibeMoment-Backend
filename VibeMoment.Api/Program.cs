@@ -22,6 +22,7 @@ builder.Services.AddDatabase(builder.Configuration);
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly()); 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+builder.Services.AddBlobStorage(builder.Configuration);
 
 var app = builder.Build();
 

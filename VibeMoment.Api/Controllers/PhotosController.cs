@@ -32,15 +32,32 @@ public class PhotosController : ControllerBase
         var response = _mapper.Map<PhotoResponse>(photo);
         return Ok(response);
     }
+
+    [AllowAnonymous]
+    [HttpGet("{id:guid}/content")]
+    public async Task<IActionResult> GetPhotoContent([FromRoute] Guid id)
+    {
+        var photo = await _photoService.GetPhotoContentAsync(id);
+        
+        return File(photo.Content, photo.ContentType);
+    }
     
     [Authorize]
     [HttpPost]
     public async Task<ActionResult<PhotoResponse>> UploadPhoto([FromForm] UploadPhotoRequest request)
     {
-        var uploadDto = await PrepareUploadDto(request);
+        var uploadDto = _mapper.Map<UploadPhotoDto>(request);
+        uploadDto.FileName = request.Photo.FileName;
+        uploadDto.UserId = Guid.Parse(User.FindFirstValue("userid")!);
+        uploadDto.Data = [];
 
-        var result = await _photoService.UploadPhotoAsync(uploadDto);
+        using var stream = request.Photo.OpenReadStream();
 
+        var result = await _photoService.UploadPhotoAsync(
+            uploadDto,
+            stream,
+            request.Photo.ContentType);
+        
         var response = _mapper.Map<PhotoResponse>(result);
 
         return CreatedAtAction(
@@ -71,7 +88,9 @@ public class PhotosController : ControllerBase
     [HttpDelete("{id:guid}")]
     public async Task<ActionResult> DeletePhoto([FromRoute] Guid id)
     {
-        await _photoService.DeletePhotoAsync(id);
+        var currentUserId = Guid.Parse(User.FindFirst("userid")!.Value);
+        
+        await _photoService.DeletePhotoAsync(id, currentUserId);
         return NoContent();
     }
 
